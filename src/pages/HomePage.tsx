@@ -221,7 +221,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </button>
 
                 <button
-                  onClick={() => onNavigate('post-job')}
+                  onClick={() => onNavigate('find-jobs')}
                   className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/95 hover:bg-blue-50 text-[#1E62EC] border border-[#1E62EC]/50 font-bold text-sm shadow-2xs transition-all cursor-pointer backdrop-blur-xs text-center justify-center flex items-center"
                 >
                   Start Earning

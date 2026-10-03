@@ -33,7 +33,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navLinks: { label: string; page: PageType }[] = [
     { label: 'Home', page: 'home' },
     { label: 'Find Jobs', page: 'find-jobs' },
-    { label: 'Post a Job', page: 'post-job' },
     { label: 'About', page: 'about' },
     { label: 'Contact', page: 'contact' },
   ];
