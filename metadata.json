@@ -1,0 +1,6 @@
+{
+  "name": "MicroJobs Marketplace",
+  "description": "Buy Digital Products and Start Earning Online with MicroJobs - The verified micro-task and gig marketplace.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
