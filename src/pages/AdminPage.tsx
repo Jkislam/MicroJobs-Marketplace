@@ -421,8 +421,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-800">
-                  {jobs.map((job) => (
-                    <tr key={job.id} className="hover:bg-slate-50/80 transition-colors">
+                  {jobs.map((job, idx) => (
+                    <tr key={`${job.id}-${idx}`} className="hover:bg-slate-50/80 transition-colors">
                       <td className="p-3 font-bold text-slate-900">
                         {job.title}
                         <span className="block text-[11px] font-normal text-slate-400">{job.id}</span>

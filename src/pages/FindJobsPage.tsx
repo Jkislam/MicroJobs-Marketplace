@@ -329,9 +329,9 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
             {/* 3-Column Cards Grid */}
             {filteredJobs.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredJobs.map((job) => (
+                {filteredJobs.map((job, idx) => (
                   <div
-                    key={job.id}
+                    key={`${job.id}-${idx}`}
                     className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
                   >
                     <div>

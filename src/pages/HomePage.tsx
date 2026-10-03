@@ -291,9 +291,9 @@ export const HomePage: React.FC<HomePageProps> = ({
 
           {/* Cards Grid: 8 Cards matching landing page UI */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {jobs.slice(0, 8).map((job) => (
+            {jobs.slice(0, 8).map((job, idx) => (
               <div
-                key={job.id}
+                key={`${job.id}-${idx}`}
                 className="bg-white rounded-2xl p-5 shadow-2xs hover:shadow-md border border-slate-100 transition-all flex flex-col justify-between group"
               >
                 <div>

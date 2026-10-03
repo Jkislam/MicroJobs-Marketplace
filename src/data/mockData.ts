@@ -218,7 +218,7 @@ export const INITIAL_JOBS: Job[] = [
     createdAt: '6h ago'
   },
   {
-    id: 'JB-4885',
+    id: 'JB-4860',
     title: 'Install Utility Calculator App & Leave Feedback',
     category: 'App Testing',
     reward: 1.20,
@@ -245,7 +245,7 @@ export const INITIAL_JOBS: Job[] = [
     createdAt: '4h ago'
   },
   {
-    id: 'JB-4880',
+    id: 'JB-4855',
     title: 'Image Background Removal & Crop (5 Shoes)',
     category: 'Design',
     reward: 0.45,
@@ -272,7 +272,7 @@ export const INITIAL_JOBS: Job[] = [
     createdAt: '5h ago'
   },
   {
-    id: 'JB-4875',
+    id: 'JB-4850',
     title: 'Newsletter Sign-Up & Email Confirmation',
     category: 'Digital Marketing',
     reward: 0.40,
@@ -299,7 +299,7 @@ export const INITIAL_JOBS: Job[] = [
     createdAt: '6h ago'
   },
   {
-    id: 'JB-4870',
+    id: 'JB-4845',
     title: 'Grammar Review & Spelling Check (200 words)',
     category: 'Writing & Proofreading',
     reward: 0.95,
