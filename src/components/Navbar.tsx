@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PageType, UserProfileData } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface NavbarProps {
   currentPage: PageType;
@@ -18,6 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   isLoggedIn,
   onToggleLogin
 }) => {
+  const { language, toggleLanguage, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchVal, setSearchVal] = useState('');
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -31,10 +33,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const navLinks: { label: string; page: PageType }[] = [
-    { label: 'Home', page: 'home' },
-    { label: 'Find Jobs', page: 'find-jobs' },
-    { label: 'About', page: 'about' },
-    { label: 'Contact', page: 'contact' },
+    { label: t('home'), page: 'home' },
+    { label: t('findJobs'), page: 'find-jobs' },
+    { label: t('about'), page: 'about' },
+    { label: t('contact'), page: 'contact' },
   ];
 
   return (
@@ -84,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <span className="material-symbols-outlined text-[15px]">admin_panel_settings</span>
-              <span>Admin Console</span>
+              <span>{t('adminConsole')}</span>
             </button>
           </nav>
         </div>
@@ -97,7 +99,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="text"
               value={searchVal}
               onChange={(e) => setSearchVal(e.target.value)}
-              placeholder="Search jobs..."
+              placeholder={t('searchPlaceholder')}
               className="w-full pl-9 pr-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all placeholder:text-slate-400"
             />
             <span className="material-symbols-outlined w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px]">
@@ -125,7 +127,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {user.fullName}
                     </span>
                     <span className="text-[11px] text-slate-500 leading-tight mt-0.5 font-medium">
-                      Top Rated Freelancer
+                      {t('topRatedFreelancer')}
                     </span>
                   </div>
                   <span className="material-symbols-outlined text-slate-400 text-[18px]">
@@ -148,7 +150,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2"
                     >
                       <span className="material-symbols-outlined text-[18px]">account_circle</span>
-                      <span>My Profile</span>
+                      <span>{t('myProfile')}</span>
                     </button>
                     <button
                       onClick={() => {
@@ -158,7 +160,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2"
                     >
                       <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
-                      <span>Admin Control Center</span>
+                      <span>{t('adminControlCenter')}</span>
                     </button>
                     <div className="border-t border-slate-100 my-1"></div>
                     <button
@@ -169,7 +171,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       className="w-full text-left px-4 py-2 text-xs font-medium text-red-600 hover:bg-red-50 flex items-center gap-2"
                     >
                       <span className="material-symbols-outlined text-[18px]">logout</span>
-                      <span>Log Out</span>
+                      <span>{t('logOut')}</span>
                     </button>
                   </div>
                 )}
@@ -181,22 +183,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => onNavigate('login')}
                 className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-blue-600 px-2 sm:px-3 py-1.5 sm:py-2 transition-colors cursor-pointer"
               >
-                Login
+                {t('login')}
               </button>
               <button
                 onClick={() => onNavigate('register')}
                 className="text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-3.5 sm:px-5 py-1.5 sm:py-2.5 rounded-full shadow-sm shadow-blue-500/30 transition-all hover:shadow-md cursor-pointer whitespace-nowrap"
               >
-                Register
+                {t('register')}
               </button>
             </div>
           )}
 
-          {/* Mobile Menu Button */}
+          {/* Three-line Hamburger Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-1.5 sm:p-2 text-slate-700 hover:text-blue-600 rounded-xl focus:outline-none cursor-pointer flex-shrink-0"
-            aria-label="Toggle navigation menu"
+            className="p-1.5 sm:p-2 text-slate-700 hover:text-blue-600 hover:bg-slate-100 rounded-xl focus:outline-none cursor-pointer flex-shrink-0 transition-colors border border-slate-200/80"
+            aria-label="Toggle menu"
+            title="Menu & Language Option"
           >
             <span className="material-symbols-outlined text-[24px] sm:text-[26px]">
               {mobileMenuOpen ? 'close' : 'menu'}
@@ -205,22 +208,38 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Mobile Navigation Drawer */}
+      {/* Three-line Menu Drawer (Contains Language Switcher) */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-4 shadow-xl animate-in slide-in-from-top-2 duration-150">
-          {/* Mobile Search Bar */}
-          <form onSubmit={handleSearchSubmit} className="relative w-full">
+        <div className="bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-4 shadow-xl animate-in slide-in-from-top-2 duration-150 max-w-7xl mx-auto">
+          {/* Search Bar inside Menu */}
+          <form onSubmit={handleSearchSubmit} className="relative w-full md:hidden">
             <input
               type="text"
               value={searchVal}
               onChange={(e) => setSearchVal(e.target.value)}
-              placeholder="Search jobs..."
+              placeholder={t('searchPlaceholder')}
               className="w-full pl-9 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all placeholder:text-slate-400"
             />
             <span className="material-symbols-outlined w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px]">
               search
             </span>
           </form>
+
+          {/* Language Switcher Option Inside Three-line Menu */}
+          <div className="py-2.5 px-3 bg-blue-50/70 border border-blue-100 rounded-2xl flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-blue-600 text-[20px]">translate</span>
+              <span className="text-xs font-bold text-slate-800">
+                {language === 'en' ? 'Language / ওয়েবসাইট ভাষা:' : 'ভাষা / Language:'}
+              </span>
+            </div>
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer"
+            >
+              <span>{language === 'en' ? 'বাংলা রূপান্তর করুন' : 'Switch to English'}</span>
+            </button>
+          </div>
 
           <div className="space-y-1">
             {navLinks.map((link) => (
@@ -249,7 +268,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
-                <span>Admin Console</span>
+                <span>{t('adminConsole')}</span>
               </div>
               <span className="material-symbols-outlined text-[18px] text-blue-600">chevron_right</span>
             </button>

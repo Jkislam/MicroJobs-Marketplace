@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Job, CategoryItem, PageType } from '../types';
+import { Job, CategoryItem, PageType, CompletedJobActivity } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface HomePageProps {
   jobs: Job[];
   categories: CategoryItem[];
+  completedActivities?: CompletedJobActivity[];
   onNavigate: (page: PageType) => void;
   onSelectJob: (job: Job) => void;
 }
@@ -11,9 +13,11 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({
   jobs,
   categories,
+  completedActivities = [],
   onNavigate,
   onSelectJob
 }) => {
+  const { t } = useLanguage();
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   const toggleFaq = (idx: number) => {
@@ -22,20 +26,20 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   const faqs = [
     {
-      q: 'How do I get started?',
-      a: 'Register a free account, browse available micro-jobs matching your skill set, complete the requirements, and submit your proof for instant review.'
+      q: t('faqQ1') || 'How do I get started?',
+      a: t('faqA1') || 'Register a free account, browse available micro-jobs matching your skill set, complete the requirements, and submit your proof for instant review.'
     },
     {
-      q: 'Is it safe to buy digital products?',
-      a: 'Yes! All seller deposits and task rewards are protected by our automated 100% Escrow system before work begins.'
+      q: t('faqQ2') || 'Is it safe to work on tasks?',
+      a: t('faqA2') || 'Yes! All seller deposits and task rewards are protected by our automated 100% Escrow system before work begins.'
     },
     {
-      q: 'How do I receive my payment?',
-      a: 'Once your task submission is approved by the employer or auto-released after 48 hours, funds transfer directly to your wallet for instant cashout.'
+      q: t('faqQ3') || 'How do I receive my payment?',
+      a: t('faqA3') || 'Once your task submission is approved by the employer or auto-released after 48 hours, funds transfer directly to your wallet for instant cashout.'
     },
     {
-      q: 'What payment methods are available?',
-      a: 'We support local mobile wallets (bKash, Nagad), direct bank transfers (Bank Asia), PayPal, and crypto stablecoins.'
+      q: t('faqQ4') || 'What payment methods are available?',
+      a: t('faqA4') || 'We support local mobile wallets (bKash, Nagad), direct bank transfers (Bank Asia), PayPal, and crypto stablecoins.'
     }
   ];
 
@@ -56,6 +60,20 @@ export const HomePage: React.FC<HomePageProps> = ({
           <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
             <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
           </svg>
+        </div>
+      );
+    }
+    if (catName.includes('কোরআন') || catName.toLowerCase().includes('quran')) {
+      return (
+        <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs">
+          <span className="material-symbols-outlined text-[26px]">menu_book</span>
+        </div>
+      );
+    }
+    if (catName.includes('নামাজ') || catName.toLowerCase().includes('namaz') || catName.toLowerCase().includes('prayer')) {
+      return (
+        <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shadow-xs">
+          <span className="material-symbols-outlined text-[26px]">self_improvement</span>
         </div>
       );
     }
@@ -86,6 +104,27 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       );
     }
+    if (catName.includes('Mobile Recharge') || catName.includes('Recharge')) {
+      return (
+        <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs">
+          <span className="material-symbols-outlined text-[26px]">phonelink_ring</span>
+        </div>
+      );
+    }
+    if (catName.includes('Target Bonus') || catName.includes('Target')) {
+      return (
+        <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shadow-xs">
+          <span className="material-symbols-outlined text-[26px]">stars</span>
+        </div>
+      );
+    }
+    if (catName.includes('Leader Shift') || catName.includes('Leader')) {
+      return (
+        <div className="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shadow-xs">
+          <span className="material-symbols-outlined text-[26px]">leaderboard</span>
+        </div>
+      );
+    }
     return (
       <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shadow-xs">
         <span className="material-symbols-outlined text-[26px]">language</span>
@@ -94,7 +133,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   };
 
   // Helper for Job card icon badge matching UI screenshot
-  const renderJobCardIcon = (title: string, category: string) => {
+  const renderJobCardIcon = (title: string, _category: string) => {
     if (title.toLowerCase().includes('gmail')) {
       return (
         <div className="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
@@ -147,25 +186,23 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       );
     }
-    if (title.toLowerCase().includes('data entry')) {
-      return (
-        <div className="w-10 h-10 rounded-xl bg-[#E2EEFF] text-blue-600 flex items-center justify-center">
-          <span className="material-symbols-outlined text-[22px]">description</span>
-        </div>
-      );
-    }
     return (
-      <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-        <span className="material-symbols-outlined text-[22px]">image</span>
+      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+        <span className="material-symbols-outlined text-[22px]">work</span>
       </div>
     );
   };
 
   const getCategoryBadgeClass = (category: string) => {
-    if (category === 'Social Media' || category === 'YouTube' || category === 'Design') {
-      return 'bg-purple-100/70 text-purple-700';
+    switch (category) {
+      case 'Email': return 'bg-red-50 text-red-600';
+      case 'Social Media': return 'bg-blue-50 text-blue-600';
+      case 'Telegram': return 'bg-sky-50 text-sky-600';
+      case 'YouTube': return 'bg-rose-50 text-rose-600';
+      case 'Website': return 'bg-indigo-50 text-indigo-600';
+      case 'Data Entry': return 'bg-emerald-50 text-emerald-600';
+      default: return 'bg-slate-100 text-slate-700';
     }
-    return 'bg-blue-100/70 text-blue-700';
   };
 
   return (
@@ -181,11 +218,10 @@ export const HomePage: React.FC<HomePageProps> = ({
             alt="Hero Background" 
             className="w-full h-full object-cover object-center sm:object-right opacity-85 sm:opacity-100 transition-opacity"
             onError={(e) => {
-              // Fallback if image path varies
               (e.target as HTMLElement).style.display = 'none';
             }}
           />
-          {/* Readability Gradient Overlay - Soft & Responsive */}
+          {/* Readability Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#EBF3FF]/90 via-[#EBF3FF]/75 to-[#EBF3FF]/40 sm:bg-gradient-to-r sm:from-[#EBF3FF] sm:via-[#EBF3FF]/85 sm:to-transparent pointer-events-none"></div>
         </div>
 
@@ -196,27 +232,27 @@ export const HomePage: React.FC<HomePageProps> = ({
               {/* Soft Blue Pill Badge */}
               <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#DCE7FF]/90 backdrop-blur-xs text-[#1E62EC] text-[11px] sm:text-xs font-bold shadow-2xs max-w-full">
                 <span className="material-symbols-outlined text-[15px] sm:text-[16px]">bolt</span>
-                <span className="truncate">Work • Earn • Grow</span>
+                <span className="truncate">{t('heroBadge')}</span>
               </div>
 
-              {/* Main Title - Responsive & Break-Words Protected */}
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight sm:leading-[1.12] break-words max-w-full">
-                Buy Digital Products.{' '}
-                <span className="text-[#1E62EC] block mt-1">Start Earning Online.</span>
+              {/* Main Title */}
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight sm:leading-[1.12] break-words max-w-full font-display">
+                {t('heroTitle1')}{' '}
+                <span className="text-[#1E62EC] block mt-1">{t('heroTitle2')}</span>
               </h1>
 
               {/* Paragraph */}
               <p className="text-sm sm:text-lg text-slate-600 max-w-lg font-normal leading-relaxed break-words">
-                Discover useful digital products and sell your own legal digital products through our simple marketplace.
+                {t('heroSubtitle')}
               </p>
 
-              {/* Action Buttons - Full width on small mobile, auto on sm+ */}
+              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2 w-full sm:w-auto">
                 <button
                   onClick={() => onNavigate('find-jobs')}
                   className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#1E62EC] hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Explore Marketplace</span>
+                  <span>{t('exploreMarketplace')}</span>
                   <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
                 </button>
 
@@ -224,12 +260,12 @@ export const HomePage: React.FC<HomePageProps> = ({
                   onClick={() => onNavigate('find-jobs')}
                   className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/95 hover:bg-blue-50 text-[#1E62EC] border border-[#1E62EC]/50 font-bold text-sm shadow-2xs transition-all cursor-pointer backdrop-blur-xs text-center justify-center flex items-center"
                 >
-                  Start Earning
+                  {t('startEarning')}
                 </button>
               </div>
             </div>
 
-            {/* Hero Right Column: Clean & Empty to reveal background image */}
+            {/* Hero Right Column: Clean & Empty */}
             <div className="hidden lg:block lg:col-span-6 min-h-[300px]"></div>
           </div>
         </div>
@@ -240,19 +276,19 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Popular Categories</h2>
-              <p className="text-sm text-slate-500 mt-1">Explore a wide range of digital products and services.</p>
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight font-display">{t('popularCategories')}</h2>
+              <p className="text-sm text-slate-500 mt-1">{t('popularCategoriesSub')}</p>
             </div>
             <button
               onClick={() => onNavigate('find-jobs')}
               className="text-xs font-bold text-[#1E62EC] hover:text-blue-700 inline-flex items-center gap-1 cursor-pointer"
             >
-              <span>View All Categories</span>
+              <span>{t('viewAllCategories')}</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-5">
             {categories.map((cat) => (
               <div
                 key={cat.id}
@@ -265,31 +301,109 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <h3 className="font-extrabold text-slate-900 text-sm group-hover:text-[#1E62EC] transition-colors mb-1">
                   {cat.name}
                 </h3>
-                <span className="text-xs text-[#1E62EC] font-semibold">{cat.jobsCount}</span>
+                {cat.jobsCount ? (
+                  <span className="text-xs text-[#1E62EC] font-semibold">{cat.jobsCount}</span>
+                ) : null}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FEATURED JOBS */}
+      {/* COMPLETE JOBS SECTION */}
       <section className="py-16 bg-[#F8FAFC]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
-              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Featured Jobs</h2>
-              <p className="text-sm text-slate-500 mt-1">Handpicked jobs with good rewards. Start and earn today!</p>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/80 text-emerald-800 text-xs font-bold mb-2.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span>Live Feed • Auto Update</span>
+              </div>
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight font-display">{t('featuredJobs')}</h2>
+              <p className="text-sm text-slate-500 mt-1">{t('featuredJobsSub')}</p>
             </div>
             <button
               onClick={() => onNavigate('find-jobs')}
-              className="text-xs font-bold text-[#1E62EC] hover:text-blue-700 inline-flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-[#1E62EC] hover:text-blue-700 inline-flex items-center gap-1 cursor-pointer self-start sm:self-auto"
             >
-              <span>View All Jobs</span>
+              <span>{t('viewAllJobs')}</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </button>
           </div>
 
-          {/* Cards Grid: 8 Cards matching landing page UI */}
+          {/* LIVE COMPLETED JOBS LIST */}
+          <div className="mb-10 bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+            <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-emerald-400 text-[20px]">verified</span>
+                <span className="font-extrabold text-sm tracking-wide">
+                  {t('recentCompletedTitle')}
+                </span>
+              </div>
+              <span className="text-xs text-slate-300 font-medium">
+                {completedActivities.length} {t('totalCompletedCount')}
+              </span>
+            </div>
+
+            <div className="divide-y divide-slate-100 max-h-[400px] overflow-y-auto">
+              {completedActivities.map((act, index) => (
+                <div
+                  key={act.id}
+                  className={`p-4 sm:px-6 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/80 transition-colors ${
+                    index === 0 ? 'bg-emerald-50/40 border-l-4 border-l-emerald-500' : ''
+                  }`}
+                >
+                  {/* User Name & Avatar */}
+                  <div className="flex items-center gap-3 min-w-[200px]">
+                    <img
+                      src={act.userAvatar}
+                      alt={act.userName}
+                      className="w-10 h-10 rounded-full object-cover border-2 border-emerald-500/20 shadow-2xs"
+                    />
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                        <span>{act.userName}</span>
+                        {index === 0 && (
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold uppercase tracking-wider animate-pulse">
+                            Live
+                          </span>
+                        )}
+                      </h4>
+                      <span className="text-xs text-slate-500 font-medium">{act.completedAt}</span>
+                    </div>
+                  </div>
+
+                  {/* Completed Job Title & Category */}
+                  <div className="flex-1 sm:px-4">
+                    <p className="text-sm font-bold text-slate-800 line-clamp-1">{act.jobTitle}</p>
+                    <span className="inline-block mt-0.5 px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 text-[11px] font-semibold border border-blue-100">
+                      {act.category}
+                    </span>
+                  </div>
+
+                  {/* Earned Amount */}
+                  <div className="flex items-center justify-between sm:justify-end gap-3 min-w-[140px] pt-2 sm:pt-0 border-t sm:border-0 border-slate-100">
+                    <div className="text-right">
+                      <span className="text-xs text-slate-500 font-medium block">
+                        {t('earnedAmountLabel')}
+                      </span>
+                      <span className="text-base font-extrabold text-emerald-600 font-numeric-stat">
+                        +${act.earnedAmount.toFixed(2)}
+                      </span>
+                    </div>
+                    <span className="material-symbols-outlined text-emerald-500 text-[22px]">
+                      check_circle
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Cards Grid: Available Jobs to Complete */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {jobs.slice(0, 8).map((job, idx) => (
               <div
@@ -321,7 +435,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                       <span className="text-base font-extrabold text-slate-900 block leading-tight font-numeric-stat">
                         ${job.reward.toFixed(2)}
                       </span>
-                      <span className="text-[11px] text-slate-400 font-medium">Per Task</span>
+                      <span className="text-[11px] text-slate-400 font-medium">{t('reward')}</span>
                     </div>
 
                     <div className="text-right">
@@ -329,7 +443,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                         <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                         {job.availableSlots}
                       </span>
-                      <span className="text-[11px] text-slate-400 font-medium">Available</span>
+                      <span className="text-[11px] text-slate-400 font-medium">{t('slotsLeft')}</span>
                     </div>
                   </div>
                 </div>
@@ -344,7 +458,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                         className="w-7 h-7 rounded-full object-cover"
                       />
                       <span className="text-xs font-bold text-slate-700">
-                        by {job.client.name}
+                        {job.client.name}
                       </span>
                     </div>
 
@@ -361,7 +475,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     onClick={() => onSelectJob(job)}
                     className="w-full py-2.5 px-4 bg-[#1E62EC] hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-2xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <span>View Details</span>
+                    <span>{t('viewDetails')}</span>
                     <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                   </button>
                 </div>
@@ -374,8 +488,8 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* HOW IT WORKS */}
       <section className="py-16 bg-white border-t border-slate-100 text-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">How It Works</h2>
-          <p className="text-sm text-slate-500 mt-1 mb-12">Get started in just 3 simple steps.</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight font-display">{t('howItWorksTitle')}</h2>
+          <p className="text-sm text-slate-500 mt-1 mb-12">{t('howItWorksSub')}</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative max-w-4xl mx-auto items-center">
             {/* Step 1 */}
@@ -383,9 +497,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="w-16 h-16 rounded-full bg-[#1E62EC] text-white flex items-center justify-center shadow-md shadow-blue-500/20">
                 <span className="material-symbols-outlined text-[30px]">search</span>
               </div>
-              <h3 className="font-extrabold text-slate-900 text-base">1. Browse</h3>
+              <h3 className="font-extrabold text-slate-900 text-base">{t('step1Title')}</h3>
               <p className="text-xs text-slate-500 max-w-xs leading-relaxed">
-                Find the right job or service for your skills.
+                {t('step1Desc')}
               </p>
             </div>
 
@@ -399,9 +513,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="w-16 h-16 rounded-full bg-[#1E62EC] text-white flex items-center justify-center shadow-md shadow-blue-500/20">
                 <span className="material-symbols-outlined text-[30px]">assignment_turned_in</span>
               </div>
-              <h3 className="font-extrabold text-slate-900 text-base">2. Complete</h3>
+              <h3 className="font-extrabold text-slate-900 text-base">{t('step2Title')}</h3>
               <p className="text-xs text-slate-500 max-w-xs leading-relaxed">
-                Finish the task and submit proof.
+                {t('step2Desc')}
               </p>
             </div>
 
@@ -415,37 +529,36 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="w-16 h-16 rounded-full bg-[#1E62EC] text-white flex items-center justify-center shadow-md shadow-blue-500/20">
                 <span className="material-symbols-outlined text-[30px]">attach_money</span>
               </div>
-              <h3 className="font-extrabold text-slate-900 text-base">3. Earn</h3>
+              <h3 className="font-extrabold text-slate-900 text-base">{t('step3Title')}</h3>
               <p className="text-xs text-slate-500 max-w-xs leading-relaxed">
-                Get paid and withdraw your earnings.
+                {t('step3Desc')}
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA BANNER: Have a digital product to sell? */}
+      {/* CTA BANNER */}
       <section className="py-12 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl bg-[#0B215E] text-white p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl relative overflow-hidden">
-            {/* Left Graphics */}
             <div className="flex items-center gap-6 max-w-md">
               <div className="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white shrink-0">
-                <span className="material-symbols-outlined text-[40px]">storefront</span>
+                <span className="material-symbols-outlined text-[40px]">home_work</span>
               </div>
               <div>
-                <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Have a digital product to sell?</h3>
+                <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display">{t('bannerTitle')}</h3>
                 <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mt-2">
-                  Join our marketplace and reach thousands of buyers worldwide. It's easy, safe and fast!
+                  {t('bannerSubtitle')}
                 </p>
               </div>
             </div>
 
             <button
-              onClick={() => onNavigate('post-job')}
+              onClick={() => onNavigate('find-jobs')}
               className="px-8 py-3.5 rounded-full bg-white hover:bg-slate-100 text-[#0B215E] font-bold text-sm shadow-md transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 shrink-0"
             >
-              <span>Start Selling</span>
+              <span>{t('startEarning')}</span>
               <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
             </button>
           </div>
@@ -457,14 +570,14 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Frequently Asked Questions</h2>
-              <p className="text-sm text-slate-500 mt-1">Find answers to the most common questions about our platform.</p>
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight font-display">{t('faqTitle')}</h2>
+              <p className="text-sm text-slate-500 mt-1">{t('faqSub')}</p>
             </div>
             <button
               onClick={() => onNavigate('find-jobs')}
               className="text-xs font-bold text-[#1E62EC] hover:text-blue-700 inline-flex items-center gap-1 cursor-pointer"
             >
-              <span>View All FAQs</span>
+              <span>{t('viewAllJobs')}</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </button>
           </div>

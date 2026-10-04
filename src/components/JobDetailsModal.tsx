@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Job } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface JobDetailsModalProps {
   job: Job | null;
@@ -12,6 +13,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
   onClose,
   onSubmitProof
 }) => {
+  const { t } = useLanguage();
   const [proofText, setProofText] = useState('');
   const [fileUploaded, setFileUploaded] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -43,7 +45,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
               </span>
               <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
                 <span className="material-symbols-outlined text-[15px] text-amber-500">schedule</span>
-                {job.daysLeft} Days left
+                {job.daysLeft} {t('daysLeft')}
               </span>
             </div>
             <h2 className="text-xl font-bold text-slate-900 font-headline-md leading-snug">
@@ -63,11 +65,11 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
           {/* Key Metrics Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 bg-slate-50 rounded-xl">
             <div>
-              <span className="block text-xs text-slate-500">Reward Per Task</span>
+              <span className="block text-xs text-slate-500">{t('reward')}</span>
               <span className="text-lg font-bold text-blue-600 font-numeric-stat">${job.reward.toFixed(2)} USD</span>
             </div>
             <div>
-              <span className="block text-xs text-slate-500">Available Slots</span>
+              <span className="block text-xs text-slate-500">{t('slotsLeft')}</span>
               <span className="text-sm font-bold text-slate-900 font-numeric-stat">
                 {job.availableSlots} / {job.totalSlots}
               </span>
@@ -98,7 +100,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                     </span>
                   )}
                 </div>
-                <span className="text-xs text-slate-500">{job.client.badgeText || 'Verified Client'}</span>
+                <span className="text-xs text-slate-500">{t('verifiedBuyer')}</span>
               </div>
             </div>
             <div className="flex items-center gap-1 bg-white px-2.5 py-1 rounded-full text-xs font-semibold text-slate-800 shadow-xs">
@@ -118,7 +120,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
 
           {/* Step-by-Step Instructions */}
           <div>
-            <h4 className="text-sm font-bold text-slate-900 mb-2.5">Required Step-by-Step Instructions</h4>
+            <h4 className="text-sm font-bold text-slate-900 mb-2.5">{t('taskInstructions')}</h4>
             <div className="space-y-2 bg-slate-50 p-4 rounded-xl font-mono text-xs text-slate-800 leading-relaxed border border-slate-200/60">
               {job.instructions.map((step, idx) => (
                 <div key={idx} className="flex items-start gap-2">
@@ -132,7 +134,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
           {/* Requirements Chips if available */}
           {job.requirements && job.requirements.length > 0 && (
             <div>
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Worker Requirements</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{t('requirements')}</h4>
               <div className="flex flex-wrap gap-2">
                 {job.requirements.map((req, i) => (
                   <span key={i} className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-medium">
@@ -145,16 +147,16 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
 
           {/* Submission Form */}
           <form onSubmit={handleSubmit} className="pt-2 border-t border-slate-100 space-y-4">
-            <h4 className="text-sm font-bold text-slate-900">Submit Verification Proof</h4>
+            <h4 className="text-sm font-bold text-slate-900">{t('submitProofTitle')}</h4>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Text Response / Transaction ID / Notes
+                Text Response / Transaction ID / Proof Text
               </label>
               <textarea
                 value={proofText}
                 onChange={(e) => setProofText(e.target.value)}
-                placeholder="Provide your email, username, transaction hash, or required response text..."
+                placeholder={t('proofPlaceholder')}
                 rows={3}
                 className="w-full p-3 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
               />
@@ -163,7 +165,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
             {/* File Upload Simulation */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Upload Proof Screenshot (Image PNG/JPG)
+                Upload Proof Screenshot (PNG/JPG)
               </label>
               <div
                 onClick={() => setFileUploaded(!fileUploaded)}
@@ -211,7 +213,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                       : 'bg-slate-300 cursor-not-allowed'
                   }`}
                 >
-                  <span>Submit Proof for ${job.reward.toFixed(2)}</span>
+                  <span>{t('submitProofBtn')} (${job.reward.toFixed(2)})</span>
                   <span className="material-symbols-outlined text-[16px]">send</span>
                 </button>
               </div>

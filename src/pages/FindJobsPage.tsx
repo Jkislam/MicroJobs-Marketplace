@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Job, FilterState } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface FindJobsPageProps {
   jobs: Job[];
@@ -7,6 +8,7 @@ interface FindJobsPageProps {
 }
 
 export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob }) => {
+  const { t } = useLanguage();
   const [filters, setFilters] = useState<FilterState>({
     search: '',
     categories: ['Social Media', 'Data Entry', 'Website Testing', 'Surveys', 'App Testing', 'Design', 'Digital Marketing', 'Writing & Proofreading'],
@@ -102,11 +104,11 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight font-display">
-            Find Jobs
+            {t('findJobsTitle')}
           </h1>
 
           <p className="text-slate-600 text-xs sm:text-base mt-2 max-w-xl leading-relaxed">
-            Browse verified micro-tasks, complete simple requirements, and build your reliable daily online income.
+            {t('findJobsSub')}
           </p>
 
           {/* Search Input Bar */}
@@ -119,7 +121,7 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
                 type="text"
                 value={filters.search}
                 onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
-                placeholder="Search by keywords: testing, survey, review, data entry..."
+                placeholder={t('searchJobsInput')}
                 className="w-full bg-transparent border-0 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0"
               />
             </div>
@@ -127,7 +129,7 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
               onClick={() => {}}
               className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-7 py-3 rounded-full transition-all shadow-sm cursor-pointer"
             >
-              <span>Search</span>
+              <span>{t('findJobs')}</span>
               <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
             </button>
           </div>
@@ -155,7 +157,7 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
           >
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-blue-600 text-[20px]">tune</span>
-              <span>Filter Jobs ({filters.categories.length} selected)</span>
+              <span>{t('filters')} ({filters.categories.length})</span>
             </div>
             <span className="material-symbols-outlined text-slate-500 text-[20px]">
               {mobileFilterOpen ? 'expand_less' : 'expand_more'}
@@ -170,19 +172,19 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
                 <span className="material-symbols-outlined text-blue-600 text-[20px]">tune</span>
-                <span>Filters</span>
+                <span>{t('filters')}</span>
               </div>
               <button
                 onClick={resetFilters}
                 className="text-xs font-bold text-blue-600 hover:text-blue-700 cursor-pointer"
               >
-                Clear All
+                {t('clearAll')}
               </button>
             </div>
 
             {/* Category Checkboxes */}
             <div>
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Categories</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">{t('categoriesHeader')}</h4>
               <div className="space-y-2 text-xs text-slate-700 max-h-56 overflow-y-auto pr-1">
                 {categoriesList.map((cat) => {
                   const checked = filters.categories.includes(cat.name);
@@ -209,7 +211,7 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
             {/* Reward Range */}
             <div className="pt-4 border-t border-slate-100">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Reward Range</h4>
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('rewardRange')}</h4>
                 <span className="text-xs font-bold text-blue-600 font-numeric-stat">
                   ${filters.minReward.toFixed(2)} - ${filters.maxReward.toFixed(2)}
                 </span>
@@ -217,7 +219,7 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
 
               <div className="grid grid-cols-2 gap-2 my-3">
                 <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">Min ($)</label>
+                  <label className="block text-[11px] text-slate-400 mb-1">{t('min')}</label>
                   <div className="flex items-center bg-slate-50 rounded-lg px-2.5 py-1.5 border border-slate-200">
                     <span className="text-slate-400 text-xs mr-1">$</span>
                     <input
@@ -233,7 +235,7 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
                 </div>
 
                 <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">Max ($)</label>
+                  <label className="block text-[11px] text-slate-400 mb-1">{t('max')}</label>
                   <div className="flex items-center bg-slate-50 rounded-lg px-2.5 py-1.5 border border-slate-200">
                     <span className="text-slate-400 text-xs mr-1">$</span>
                     <input
@@ -248,80 +250,32 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
                   </div>
                 </div>
               </div>
-
-              <input
-                type="range"
-                min="0.10"
-                max="5.00"
-                step="0.10"
-                value={filters.maxReward}
-                onChange={(e) => setFilters((prev) => ({ ...prev, maxReward: parseFloat(e.target.value) }))}
-                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-              />
             </div>
-
-            {/* Job Status */}
-            <div className="pt-4 border-t border-slate-100">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Job Status</h4>
-              <div className="space-y-2 text-xs text-slate-700">
-                <label className="flex items-center gap-2.5 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="jobStatus"
-                    checked={filters.jobStatus === 'available'}
-                    onChange={() => setFilters((prev) => ({ ...prev, jobStatus: 'available' }))}
-                    className="w-4 h-4 text-blue-600 accent-blue-600 cursor-pointer"
-                  />
-                  <span>Available Slots Only</span>
-                </label>
-                <label className="flex items-center gap-2.5 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="jobStatus"
-                    checked={filters.jobStatus === 'new'}
-                    onChange={() => setFilters((prev) => ({ ...prev, jobStatus: 'new' }))}
-                    className="w-4 h-4 text-blue-600 accent-blue-600 cursor-pointer"
-                  />
-                  <span>Newly Added (&lt; 24 hrs)</span>
-                </label>
-              </div>
-            </div>
-
-            <button
-              onClick={resetFilters}
-              className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-[18px]">filter_alt</span>
-              <span>Apply Filters</span>
-            </button>
           </aside>
 
-          {/* MAIN CARDS STREAM */}
+          {/* RIGHT CARDS GRID SECTION */}
           <div className="flex-1 w-full space-y-6">
             {/* Top Sub-Bar */}
             <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span className="font-bold text-slate-900 text-sm">
-                  <span>{filteredJobs.length}</span> Jobs Available
-                </span>
-                <span className="hidden md:inline text-xs text-slate-400">
-                  • Verified micro-tasks ready for submission
+                  <span>{filteredJobs.length}</span> {t('availableJobs')}
                 </span>
               </div>
 
               {/* Sort Selector */}
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-slate-400 hidden sm:inline">Sort by:</span>
+                <span className="text-xs font-semibold text-slate-400 hidden sm:inline">{t('sortBy')}</span>
                 <select
                   value={filters.sortBy}
                   onChange={(e) => setFilters((prev) => ({ ...prev, sortBy: e.target.value as any }))}
                   className="bg-slate-50 border border-slate-200 font-bold text-xs text-slate-800 rounded-lg py-1.5 pl-3 pr-8 focus:ring-2 focus:ring-blue-500/20 cursor-pointer"
                 >
-                  <option value="newest">Newest First</option>
-                  <option value="reward-high">Highest Reward</option>
-                  <option value="slots-most">Most Slots Available</option>
-                  <option value="rating">Top Rated Clients</option>
+                  <option value="newest">{t('newestFirst')}</option>
+                  <option value="reward-high">{t('highestReward')}</option>
+                  <option value="slots-most">{t('mostSlots')}</option>
+                  <option value="rating">{t('topRatedClients')}</option>
                 </select>
               </div>
             </div>
@@ -341,7 +295,7 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
                         </span>
                         <div className="flex items-center gap-1 text-slate-400 text-xs">
                           <span className="material-symbols-outlined text-[15px] text-amber-500">schedule</span>
-                          <span>{job.daysLeft} Days left</span>
+                          <span>{job.daysLeft} {t('daysLeft')}</span>
                         </div>
                       </div>
 
@@ -355,13 +309,13 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
 
                       <div className="bg-slate-50 rounded-xl p-3 mb-4 grid grid-cols-2 gap-2 border border-slate-100">
                         <div>
-                          <span className="block text-[11px] text-slate-400">Reward</span>
+                          <span className="block text-[11px] text-slate-400">{t('reward')}</span>
                           <span className="text-base font-bold text-blue-600 font-numeric-stat">
                             ${job.reward.toFixed(2)}
                           </span>
                         </div>
                         <div>
-                          <span className="block text-[11px] text-slate-400">Available Slots</span>
+                          <span className="block text-[11px] text-slate-400">{t('slotsLeft')}</span>
                           <span className="text-xs font-bold text-slate-900 font-numeric-stat">
                             {job.availableSlots} / {job.totalSlots}
                           </span>
@@ -384,7 +338,7 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
                                 verified
                               </span>
                             </span>
-                            <span className="text-[11px] text-slate-400 block">{job.client.badgeText || 'Verified Buyer'}</span>
+                            <span className="text-[11px] text-slate-400 block">{t('verifiedBuyer')}</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-1 bg-slate-50 px-2 py-0.5 rounded-full text-xs font-semibold text-slate-700">
@@ -399,7 +353,7 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
                         onClick={() => onSelectJob(job)}
                         className="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
                       >
-                        <span>View Details</span>
+                        <span>{t('viewDetails')}</span>
                         <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                       </button>
                     </div>
@@ -408,60 +362,22 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({ jobs, onSelectJob })
               </div>
             ) : (
               /* Empty State */
-              <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 shadow-xs space-y-4">
-                <div className="w-16 h-16 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
-                  <span className="material-symbols-outlined text-[32px]">manage_search</span>
+              <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 shadow-xs">
+                <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4">
+                  <span className="material-symbols-outlined text-[32px]">search_off</span>
                 </div>
-                <h4 className="font-bold text-slate-900 text-base">No matching micro-jobs found</h4>
-                <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-                  We couldn't find tasks matching your selected reward or category filters. Try expanding your search range or clearing criteria.
+                <h3 className="font-extrabold text-slate-900 text-lg mb-1">{t('noJobsFound')}</h3>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto mb-6">
+                  Try adjusting your keywords, price range, or category checkboxes to see more available tasks.
                 </p>
                 <button
                   onClick={resetFilters}
-                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-full shadow-xs cursor-pointer"
+                  className="px-6 py-2.5 bg-blue-600 text-white font-bold text-xs rounded-full shadow-xs hover:bg-blue-700 transition-colors cursor-pointer"
                 >
-                  Reset All Filters
+                  {t('clearAll')}
                 </button>
               </div>
             )}
-
-            {/* Pagination */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-2xl p-4 border border-slate-100 shadow-xs">
-              <span className="text-xs text-slate-500">
-                Showing <span className="font-bold text-slate-900">1 - {filteredJobs.length}</span> of <span className="font-bold text-slate-900">245</span> jobs
-              </span>
-              <div className="flex items-center gap-1">
-                <button className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 cursor-not-allowed">
-                  Previous
-                </button>
-                <button className="w-8 h-8 rounded-lg bg-blue-600 text-white text-xs font-bold flex items-center justify-center">1</button>
-                <button className="w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-semibold flex items-center justify-center">2</button>
-                <button className="w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-semibold flex items-center justify-center">3</button>
-                <span className="w-6 text-center text-xs text-slate-400">...</span>
-                <button className="w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-semibold flex items-center justify-center">28</button>
-                <button className="px-3 py-1.5 rounded-lg text-xs font-bold text-blue-600 hover:bg-blue-50 cursor-pointer">
-                  Next
-                </button>
-              </div>
-            </div>
-
-            {/* Employer Escrow Guaranteed Banner */}
-            <div className="rounded-2xl bg-[#0A1128] text-white p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md relative overflow-hidden">
-              <div className="flex items-center gap-4 relative z-10">
-                <div className="w-12 h-12 rounded-xl bg-blue-600/30 flex items-center justify-center flex-shrink-0 text-blue-300">
-                  <span className="material-symbols-outlined text-[28px]">shield</span>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white text-base">Employer Escrow Guaranteed</h4>
-                  <p className="text-xs text-slate-400 max-w-lg mt-0.5 leading-relaxed">
-                    All task payouts are held safely in escrow before work begins. Completed submissions are verified and released within 48 hours.
-                  </p>
-                </div>
-              </div>
-              <button className="px-5 py-2.5 rounded-full bg-white hover:bg-slate-100 text-blue-900 font-bold text-xs whitespace-nowrap shadow-xs cursor-pointer relative z-10">
-                Learn About Protection
-              </button>
-            </div>
           </div>
         </div>
       </div>

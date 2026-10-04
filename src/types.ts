@@ -92,3 +92,13 @@ export interface FilterState {
   jobStatus: 'all' | 'available' | 'new' | 'urgent';
   sortBy: 'newest' | 'reward-high' | 'slots-most' | 'rating';
 }
+
+export interface CompletedJobActivity {
+  id: string;
+  userName: string;
+  userAvatar: string;
+  jobTitle: string;
+  category: string;
+  earnedAmount: number;
+  completedAt: string;
+}

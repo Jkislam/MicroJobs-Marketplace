@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { PageType, Job, WithdrawalRequest, UserProfileData } from './types';
-import { INITIAL_JOBS, CATEGORIES_LIST, INITIAL_WITHDRAWALS, MOCK_USER } from './data/mockData';
+import { PageType, Job, WithdrawalRequest, UserProfileData, CompletedJobActivity } from './types';
+import { INITIAL_JOBS, CATEGORIES_LIST, INITIAL_WITHDRAWALS, MOCK_USER, INITIAL_COMPLETED_ACTIVITIES } from './data/mockData';
+import { LanguageProvider } from './context/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { JobDetailsModal } from './components/JobDetailsModal';
@@ -20,6 +21,7 @@ export default function App() {
   const [jobs, setJobs] = useState<Job[]>(INITIAL_JOBS);
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>(INITIAL_WITHDRAWALS);
   const [user, setUser] = useState<UserProfileData>(MOCK_USER);
+  const [completedActivities, setCompletedActivities] = useState<CompletedJobActivity[]>(INITIAL_COMPLETED_ACTIVITIES);
 
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
@@ -43,6 +45,8 @@ export default function App() {
   };
 
   const handleSubmitProof = (jobId: string, _proofText: string) => {
+    const targetJob = jobs.find((j) => j.id === jobId);
+    
     setJobs((prev) =>
       prev.map((j) => {
         if (j.id === jobId && j.availableSlots > 0) {
@@ -54,11 +58,28 @@ export default function App() {
         return j;
       })
     );
+
+    const earned = targetJob ? targetJob.reward : 0.50;
+
     setUser((prev) => ({
       ...prev,
       completedTasks: prev.completedTasks + 1,
-      totalEarnings: prev.totalEarnings + (jobs.find((j) => j.id === jobId)?.reward || 0.5)
+      totalEarnings: prev.totalEarnings + earned
     }));
+
+    if (targetJob) {
+      const newActivity: CompletedJobActivity = {
+        id: `cmp-${Date.now()}`,
+        userName: user.fullName,
+        userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        jobTitle: targetJob.title,
+        category: targetJob.category,
+        earnedAmount: earned,
+        completedAt: 'Just now'
+      };
+      setCompletedActivities((prev) => [newActivity, ...prev]);
+    }
+
     showToast('Task proof submitted! Payout added to your escrow wallet.');
   };
 
@@ -91,108 +112,111 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#faf8ff] text-[#131b2e] selection:bg-blue-600 selection:text-white font-sans">
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-24 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-xs font-bold animate-in fade-in slide-in-from-top-4 duration-200 border border-slate-700">
-          <span className="material-symbols-outlined text-emerald-400 text-lg">check_circle</span>
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
-      {/* Global Navbar */}
-      <Navbar
-        currentPage={currentPage}
-        onNavigate={handleNavigate}
-        user={user}
-        onSearch={() => handleNavigate('find-jobs')}
-        isLoggedIn={isLoggedIn}
-        onToggleLogin={() => setIsLoggedIn(!isLoggedIn)}
-      />
-
-      {/* Main Content Router */}
-      <main className="flex-1 pt-20">
-        {currentPage === 'home' && (
-          <HomePage
-            jobs={jobs}
-            categories={CATEGORIES_LIST}
-            onNavigate={handleNavigate}
-            onSelectJob={(job) => setSelectedJob(job)}
-          />
+    <LanguageProvider>
+      <div className="min-h-screen flex flex-col bg-[#faf8ff] text-[#131b2e] selection:bg-blue-600 selection:text-white font-sans">
+        {/* Toast Notification */}
+        {toastMessage && (
+          <div className="fixed top-24 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-xs font-bold animate-in fade-in slide-in-from-top-4 duration-200 border border-slate-700">
+            <span className="material-symbols-outlined text-emerald-400 text-lg">check_circle</span>
+            <span>{toastMessage}</span>
+          </div>
         )}
 
-        {currentPage === 'find-jobs' && (
-          <FindJobsPage
-            jobs={jobs}
-            onSelectJob={(job) => setSelectedJob(job)}
-          />
-        )}
+        {/* Global Navbar */}
+        <Navbar
+          currentPage={currentPage}
+          onNavigate={handleNavigate}
+          user={user}
+          onSearch={() => handleNavigate('find-jobs')}
+          isLoggedIn={isLoggedIn}
+          onToggleLogin={() => setIsLoggedIn(!isLoggedIn)}
+        />
 
-        {currentPage === 'post-job' && (
-          <PostJobPage
-            onAddJob={handleAddJob}
-            onNavigate={handleNavigate}
-          />
-        )}
+        {/* Main Content Router */}
+        <main className="flex-1 pt-20">
+          {currentPage === 'home' && (
+            <HomePage
+              jobs={jobs}
+              categories={CATEGORIES_LIST}
+              completedActivities={completedActivities}
+              onNavigate={handleNavigate}
+              onSelectJob={(job) => setSelectedJob(job)}
+            />
+          )}
 
-        {currentPage === 'about' && (
-          <AboutPage onNavigate={handleNavigate} />
-        )}
+          {currentPage === 'find-jobs' && (
+            <FindJobsPage
+              jobs={jobs}
+              onSelectJob={(job) => setSelectedJob(job)}
+            />
+          )}
 
-        {currentPage === 'contact' && <ContactPage />}
+          {currentPage === 'post-job' && (
+            <PostJobPage
+              onAddJob={handleAddJob}
+              onNavigate={handleNavigate}
+            />
+          )}
 
-        {currentPage === 'login' && (
-          <LoginPage
-            onNavigate={handleNavigate}
-            onLoginSuccess={() => {
-              setIsLoggedIn(true);
-              showToast('Logged in successfully!');
-            }}
-          />
-        )}
+          {currentPage === 'about' && (
+            <AboutPage onNavigate={handleNavigate} />
+          )}
 
-        {currentPage === 'register' && (
-          <RegisterPage
-            onNavigate={handleNavigate}
-            onRegisterSuccess={() => {
-              setIsLoggedIn(true);
-              showToast('Account created successfully!');
-            }}
-          />
-        )}
+          {currentPage === 'contact' && <ContactPage />}
 
-        {currentPage === 'profile' && (
-          <ProfilePage
-            user={user}
-            onUpdateUser={(updated) => {
-              setUser(updated);
-              showToast('Profile settings saved.');
-            }}
-          />
-        )}
+          {currentPage === 'login' && (
+            <LoginPage
+              onNavigate={handleNavigate}
+              onLoginSuccess={() => {
+                setIsLoggedIn(true);
+                showToast('Logged in successfully!');
+              }}
+            />
+          )}
 
-        {currentPage === 'admin' && (
-          <AdminPage
-            jobs={jobs}
-            withdrawals={withdrawals}
-            onNavigate={handleNavigate}
-            onApproveJob={handleApproveJob}
-            onRejectJob={handleRejectJob}
-            onApproveWithdrawal={handleApproveWithdrawal}
-            onRejectWithdrawal={handleRejectWithdrawal}
-          />
-        )}
-      </main>
+          {currentPage === 'register' && (
+            <RegisterPage
+              onNavigate={handleNavigate}
+              onRegisterSuccess={() => {
+                setIsLoggedIn(true);
+                showToast('Account created successfully!');
+              }}
+            />
+          )}
 
-      {/* Global Footer (Hidden on Admin screen for full control center canvas) */}
-      {currentPage !== 'admin' && <Footer onNavigate={handleNavigate} />}
+          {currentPage === 'profile' && (
+            <ProfilePage
+              user={user}
+              onUpdateUser={(updated) => {
+                setUser(updated);
+                showToast('Profile settings saved.');
+              }}
+            />
+          )}
 
-      {/* Job Details & Proof Submission Modal */}
-      <JobDetailsModal
-        job={selectedJob}
-        onClose={() => setSelectedJob(null)}
-        onSubmitProof={handleSubmitProof}
-      />
-    </div>
+          {currentPage === 'admin' && (
+            <AdminPage
+              jobs={jobs}
+              withdrawals={withdrawals}
+              onNavigate={handleNavigate}
+              onApproveJob={handleApproveJob}
+              onRejectJob={handleRejectJob}
+              onApproveWithdrawal={handleApproveWithdrawal}
+              onRejectWithdrawal={handleRejectWithdrawal}
+            />
+          )}
+        </main>
+
+        {/* Global Footer (Hidden on Admin screen for full control center canvas) */}
+        {currentPage !== 'admin' && <Footer onNavigate={handleNavigate} />}
+
+        {/* Job Details & Proof Submission Modal */}
+        <JobDetailsModal
+          job={selectedJob}
+          onClose={() => setSelectedJob(null)}
+          onSubmitProof={handleSubmitProof}
+        />
+      </div>
+    </LanguageProvider>
   );
 }

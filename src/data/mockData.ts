@@ -1,4 +1,4 @@
-import { Job, CategoryItem, WithdrawalRequest, UserProfileData } from '../types';
+import { Job, CategoryItem, WithdrawalRequest, UserProfileData, CompletedJobActivity } from '../types';
 
 export const INITIAL_JOBS: Job[] = [
   {
@@ -358,7 +358,7 @@ export const CATEGORIES_LIST: CategoryItem[] = [
     id: 'cat-gmail',
     name: 'Gmail Sell',
     iconName: 'mail',
-    jobsCount: '120+ Jobs',
+    jobsCount: '',
     rewardRange: '$0.40 - $1.50',
     description: 'Create verified accounts with complete profile setup.',
     activeJobsNumber: 120
@@ -367,46 +367,64 @@ export const CATEGORIES_LIST: CategoryItem[] = [
     id: 'cat-instagram',
     name: 'Instagram Sell',
     iconName: 'photo_camera',
-    jobsCount: '95+ Jobs',
+    jobsCount: '',
     rewardRange: '$0.25 - $2.00',
     description: 'Follow profiles, like carousels, and engage with posts.',
     activeJobsNumber: 95
   },
   {
     id: 'cat-telegram',
-    name: 'Telegram Sell',
+    name: 'Telegram Sale',
     iconName: 'send',
-    jobsCount: '80+ Jobs',
+    jobsCount: '',
     rewardRange: '$0.20 - $1.00',
     description: 'Join verified crypto & community channels.',
     activeJobsNumber: 80
   },
   {
-    id: 'cat-youtube',
-    name: 'YouTube Services',
-    iconName: 'play_circle',
-    jobsCount: '60+ Jobs',
-    rewardRange: '$0.35 - $3.00',
-    description: 'Watch video content, subscribe, and post genuine reviews.',
+    id: 'cat-quran',
+    name: 'Reading the Holy Quran',
+    iconName: 'menu_book',
+    jobsCount: '',
+    rewardRange: '$0.50 - $3.00',
+    description: 'Reciting and studying the Holy Quran.',
+    activeJobsNumber: 150
+  },
+  {
+    id: 'cat-namaz',
+    name: 'Namaj Pora',
+    iconName: 'self_improvement',
+    jobsCount: '',
+    rewardRange: '$0.30 - $2.00',
+    description: 'Daily prayer guidelines and religious learning.',
+    activeJobsNumber: 110
+  },
+  {
+    id: 'cat-mobile-recharge',
+    name: 'Mobile Recharge',
+    iconName: 'phonelink_ring',
+    jobsCount: '',
+    rewardRange: '$0.10 - $1.00',
+    description: 'Instant mobile top-up and recharge rewards.',
+    activeJobsNumber: 130
+  },
+  {
+    id: 'cat-target-bonus',
+    name: 'Target Bonus',
+    iconName: 'stars',
+    jobsCount: '',
+    rewardRange: '$1.00 - $10.00',
+    description: 'Complete daily targets to earn special bonus rewards.',
+    activeJobsNumber: 75
+  },
+  {
+    id: 'cat-leader-shift',
+    name: 'Leader Shift',
+    iconName: 'leaderboard',
+    jobsCount: '',
+    rewardRange: '$2.00 - $15.00',
+    description: 'Top performers leadership bonus and team rewards.',
     activeJobsNumber: 60
-  },
-  {
-    id: 'cat-social',
-    name: 'Social Media',
-    iconName: 'share',
-    jobsCount: '140+ Jobs',
-    rewardRange: '$0.10 - $1.50',
-    description: 'Facebook page likes, shares, retweets, and comments.',
-    activeJobsNumber: 140
-  },
-  {
-    id: 'cat-website',
-    name: 'Website & Others',
-    iconName: 'language',
-    jobsCount: '70+ Jobs',
-    rewardRange: '$0.30 - $4.50',
-    description: 'UI/UX testing, blog reviews, and survey tasks.',
-    activeJobsNumber: 70
   }
 ];
 
@@ -497,3 +515,51 @@ export const MOCK_USER: UserProfileData = {
     }
   ]
 };
+
+export const INITIAL_COMPLETED_ACTIVITIES: CompletedJobActivity[] = [
+  {
+    id: 'cmp-101',
+    userName: 'Sabbir Islam',
+    userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    jobTitle: 'Create Gmail Account & Verify',
+    category: 'Gmail Sell',
+    earnedAmount: 0.50,
+    completedAt: 'Just now'
+  },
+  {
+    id: 'cmp-102',
+    userName: 'Tanvir Hossain',
+    userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    jobTitle: 'Reading the Holy Quran (Surah Yaseen Recitation)',
+    category: 'Reading the Holy Quran',
+    earnedAmount: 1.20,
+    completedAt: '2m ago'
+  },
+  {
+    id: 'cmp-103',
+    userName: 'Amina Begum',
+    userAvatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80',
+    jobTitle: 'Follow Instagram Profile & Like 3 Posts',
+    category: 'Instagram Sell',
+    earnedAmount: 0.35,
+    completedAt: '5m ago'
+  },
+  {
+    id: 'cmp-104',
+    userName: 'Raju Ahmed',
+    userAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+    jobTitle: 'Namaj Pora - Daily Prayer Guide & Verification',
+    category: 'Namaj Pora',
+    earnedAmount: 0.80,
+    completedAt: '8m ago'
+  },
+  {
+    id: 'cmp-105',
+    userName: 'Nila Akter',
+    userAvatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80',
+    jobTitle: 'Telegram Sale - Join Official Crypto Group',
+    category: 'Telegram Sale',
+    earnedAmount: 0.45,
+    completedAt: '12m ago'
+  }
+];

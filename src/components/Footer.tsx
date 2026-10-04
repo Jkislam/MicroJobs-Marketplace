@@ -1,11 +1,14 @@
 import React from 'react';
 import { PageType } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface FooterProps {
   onNavigate: (page: PageType) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-[#0B1329] text-slate-400 font-body-sm text-sm border-t border-slate-800/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -23,31 +26,31 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 Micro<span className="text-blue-500">Jobs</span>
               </span>
             </button>
-            <p className="text-xs text-slate-500 mt-2 font-medium">Work • Earn • Grow</p>
+            <p className="text-xs text-slate-500 mt-2 font-medium">{t('heroBadge')}</p>
           </div>
 
           {/* Footer Navigation Links */}
           <div className="flex flex-wrap justify-center gap-6 text-xs sm:text-sm font-semibold text-slate-300">
             <button onClick={() => onNavigate('home')} className="hover:text-white transition-colors cursor-pointer">
-              Home
+              {t('home')}
             </button>
             <button onClick={() => onNavigate('find-jobs')} className="hover:text-white transition-colors cursor-pointer">
-              Find Jobs
+              {t('findJobs')}
             </button>
             <button onClick={() => onNavigate('find-jobs')} className="hover:text-white transition-colors cursor-pointer">
-              Categories
+              {t('categories')}
             </button>
             <button onClick={() => onNavigate('about')} className="hover:text-white transition-colors cursor-pointer">
-              About
+              {t('about')}
             </button>
             <button onClick={() => onNavigate('contact')} className="hover:text-white transition-colors cursor-pointer">
-              Contact
+              {t('contact')}
             </button>
             <button onClick={() => onNavigate('contact')} className="hover:text-white transition-colors cursor-pointer">
-              Terms
+              {t('terms')}
             </button>
             <button onClick={() => onNavigate('contact')} className="hover:text-white transition-colors cursor-pointer">
-              Privacy
+              {t('privacy')}
             </button>
           </div>
 
@@ -94,7 +97,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
         {/* Copyright Notice */}
         <div className="mt-6 text-center text-xs text-slate-500">
-          © 2026 MicroJobs Inc. All rights reserved. Built with precision and care.
+          {t('copyright')}
         </div>
       </div>
     </footer>
