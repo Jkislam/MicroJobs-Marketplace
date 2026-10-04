@@ -26,20 +26,28 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   const faqs = [
     {
-      q: t('faqQ1') || 'How do I get started?',
-      a: t('faqA1') || 'Register a free account, browse available micro-jobs matching your skill set, complete the requirements, and submit your proof for instant review.'
+      q: t('faqQ1'),
+      a: t('faqA1')
     },
     {
-      q: t('faqQ2') || 'Is it safe to work on tasks?',
-      a: t('faqA2') || 'Yes! All seller deposits and task rewards are protected by our automated 100% Escrow system before work begins.'
+      q: t('faqQ2'),
+      a: t('faqA2')
     },
     {
-      q: t('faqQ3') || 'How do I receive my payment?',
-      a: t('faqA3') || 'Once your task submission is approved by the employer or auto-released after 48 hours, funds transfer directly to your wallet for instant cashout.'
+      q: t('faqQ3'),
+      a: t('faqA3')
     },
     {
-      q: t('faqQ4') || 'What payment methods are available?',
-      a: t('faqA4') || 'We support local mobile wallets (bKash, Nagad), direct bank transfers (Bank Asia), PayPal, and crypto stablecoins.'
+      q: t('faqQ4'),
+      a: t('faqA4')
+    },
+    {
+      q: t('faqQ5'),
+      a: t('faqA5')
+    },
+    {
+      q: t('faqQ6'),
+      a: t('faqA6')
     }
   ];
 
@@ -335,7 +343,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           {/* LIVE COMPLETED JOBS LIST */}
-          <div className="mb-10 bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
             <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="material-symbols-outlined text-emerald-400 text-[20px]">verified</span>
@@ -401,86 +409,6 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Cards Grid: Available Jobs to Complete */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {jobs.slice(0, 8).map((job, idx) => (
-              <div
-                key={`${job.id}-${idx}`}
-                className="bg-white rounded-2xl p-5 shadow-2xs hover:shadow-md border border-slate-100 transition-all flex flex-col justify-between group"
-              >
-                <div>
-                  {/* Icon & Category Pill Row */}
-                  <div className="flex items-center justify-between mb-4">
-                    {renderJobCardIcon(job.title, job.category)}
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${getCategoryBadgeClass(job.category)}`}>
-                      {job.category}
-                    </span>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="font-bold text-slate-900 text-base group-hover:text-[#1E62EC] transition-colors line-clamp-1 mb-1.5">
-                    {job.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed">
-                    {job.description}
-                  </p>
-
-                  {/* Price & Slots Row */}
-                  <div className="flex items-center justify-between py-2.5 px-3 bg-slate-50 rounded-xl mb-4 border border-slate-100">
-                    <div>
-                      <span className="text-base font-extrabold text-slate-900 block leading-tight font-numeric-stat">
-                        ${job.reward.toFixed(2)}
-                      </span>
-                      <span className="text-[11px] text-slate-400 font-medium">{t('reward')}</span>
-                    </div>
-
-                    <div className="text-right">
-                      <span className="text-sm font-extrabold text-slate-800 flex items-center justify-end gap-1 font-numeric-stat">
-                        <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                        {job.availableSlots}
-                      </span>
-                      <span className="text-[11px] text-slate-400 font-medium">{t('slotsLeft')}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Employer Info & Action Button */}
-                <div>
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-100 mb-4">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={job.client.avatar}
-                        alt={job.client.name}
-                        className="w-7 h-7 rounded-full object-cover"
-                      />
-                      <span className="text-xs font-bold text-slate-700">
-                        {job.client.name}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1 text-xs font-bold text-slate-700">
-                      <span className="material-symbols-outlined text-amber-400 text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                        star
-                      </span>
-                      <span>{job.client.rating}</span>
-                      <span className="text-slate-400 font-normal">({job.client.reviewsCount})</span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => onSelectJob(job)}
-                    className="w-full py-2.5 px-4 bg-[#1E62EC] hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-2xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    <span>{t('viewDetails')}</span>
-                    <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                  </button>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
