@@ -431,16 +431,42 @@ export const CATEGORIES_LIST: CategoryItem[] = [
 export const INITIAL_WITHDRAWALS: WithdrawalRequest[] = [
   {
     id: 'W-8891',
-    freelancerName: 'Sabbir Hossain',
-    username: '@sabbir_pro',
+    freelancerName: 'Sabbir Islam',
+    username: '@sabbir',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     tier: 'Tier 3',
-    tasksDone: 142,
+    tasksDone: 148,
     amount: 45.00,
     method: 'bKash Personal',
     accountDetails: '+880 1712-•••456',
     requestedAgo: '10m ago',
     status: 'pending'
+  },
+  {
+    id: 'W-8872',
+    freelancerName: 'Sabbir Islam',
+    username: '@sabbir',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    tier: 'Tier 3',
+    tasksDone: 140,
+    amount: 65.00,
+    method: 'bKash Personal',
+    accountDetails: '+880 1712-•••456',
+    requestedAgo: 'Yesterday',
+    status: 'disbursed'
+  },
+  {
+    id: 'W-8860',
+    freelancerName: 'Sabbir Islam',
+    username: '@sabbir',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    tier: 'Tier 3',
+    tasksDone: 125,
+    amount: 42.50,
+    method: 'Nagad Direct',
+    accountDetails: '+880 1819-•••992',
+    requestedAgo: '3 days ago',
+    status: 'disbursed'
   },
   {
     id: 'W-8889',
@@ -484,6 +510,8 @@ export const INITIAL_WITHDRAWALS: WithdrawalRequest[] = [
 ];
 
 export const MOCK_USER: UserProfileData = {
+  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+  isActivated: false,
   fullName: 'Sabbir Islam',
   username: '@sabbir',
   email: 'sabbir.islam@example.com',
@@ -504,14 +532,14 @@ export const MOCK_USER: UserProfileData = {
       method: 'bKash Personal',
       details: '•••••••• 892',
       isDefault: true,
-      type: 'Instant'
+      type: '48 h to 72 h'
     },
     {
       id: 'p-2',
       method: 'Bank Asia Ltd',
       details: 'Checking •••• 4021',
       isDefault: false,
-      type: '1-2 Days'
+      type: '48 h to 72 h'
     }
   ]
 };

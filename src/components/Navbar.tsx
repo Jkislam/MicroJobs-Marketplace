@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PageType, UserProfileData } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -24,8 +24,56 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [searchVal, setSearchVal] = useState('');
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
+  const menuDrawerRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Auto-close mobile menu and dropdown when route/currentPage changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setUserDropdownOpen(false);
+  }, [currentPage]);
+
+  // Auto-close 3-line menu and user dropdown when user clicks or touches anywhere outside
+  useEffect(() => {
+    const handleOutsideInteraction = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+
+      // Close 3-line mobile menu if click/touch is outside menu drawer and hamburger toggle button
+      if (
+        mobileMenuOpen &&
+        menuDrawerRef.current &&
+        !menuDrawerRef.current.contains(target) &&
+        menuButtonRef.current &&
+        !menuButtonRef.current.contains(target)
+      ) {
+        setMobileMenuOpen(false);
+      }
+
+      // Close user avatar dropdown if click/touch is outside dropdown container
+      if (
+        userDropdownOpen &&
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(target)
+      ) {
+        setUserDropdownOpen(false);
+      }
+    };
+
+    if (mobileMenuOpen || userDropdownOpen) {
+      document.addEventListener('pointerdown', handleOutsideInteraction);
+      document.addEventListener('touchstart', handleOutsideInteraction);
+    }
+    return () => {
+      document.removeEventListener('pointerdown', handleOutsideInteraction);
+      document.removeEventListener('touchstart', handleOutsideInteraction);
+    };
+  }, [mobileMenuOpen, userDropdownOpen]);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setMobileMenuOpen(false);
+    setUserDropdownOpen(false);
     if (onSearch) {
       onSearch(searchVal);
       onNavigate('find-jobs');
@@ -40,12 +88,16 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xs w-full overflow-x-clip">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xs w-full">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4 w-full">
         {/* Brand Logo & Links */}
         <div className="flex items-center gap-2 lg:gap-8 min-w-0">
           <button
-            onClick={() => onNavigate('home')}
+            onClick={() => {
+              onNavigate('home');
+              setMobileMenuOpen(false);
+              setUserDropdownOpen(false);
+            }}
             className="flex items-center gap-2 group cursor-pointer focus:outline-none flex-shrink-0"
           >
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
@@ -65,7 +117,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               return (
                 <button
                   key={link.page}
-                  onClick={() => onNavigate(link.page)}
+                  onClick={() => {
+                    onNavigate(link.page);
+                    setMobileMenuOpen(false);
+                    setUserDropdownOpen(false);
+                  }}
                   className={`px-3.5 py-2 transition-colors cursor-pointer text-sm font-semibold rounded-lg ${
                     isActive
                       ? 'text-blue-600 font-bold relative after:content-[""] after:absolute after:bottom-0 after:left-3.5 after:right-3.5 after:h-0.5 after:bg-blue-600'
@@ -78,7 +134,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
             {/* Quick Admin Navigation Link */}
             <button
-              onClick={() => onNavigate('admin')}
+              onClick={() => {
+                onNavigate('admin');
+                setMobileMenuOpen(false);
+                setUserDropdownOpen(false);
+              }}
               className={`px-3 py-1.5 ml-2 text-xs font-bold rounded-full transition-all flex items-center gap-1.5 cursor-pointer ${
                 currentPage === 'admin'
                   ? 'bg-blue-600 text-white shadow-sm'
@@ -108,16 +168,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           </form>
 
           {isLoggedIn ? (
-            <div className="flex items-center gap-1.5 sm:gap-2 pl-1 sm:pl-2 border-l border-slate-200 relative">
+            <div className="flex items-center gap-1.5 sm:gap-2 pl-1 sm:pl-2 border-l border-slate-200 relative" ref={userDropdownRef}>
               {/* User Profile Avatar Button */}
               <div className="relative">
                 <button
-                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  onClick={() => {
+                    setUserDropdownOpen(!userDropdownOpen);
+                    setMobileMenuOpen(false);
+                  }}
                   className="flex items-center gap-1.5 sm:gap-2.5 p-1 rounded-full hover:bg-slate-100 transition-colors cursor-pointer group focus:outline-none"
                 >
                   <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-blue-600 text-white flex items-center justify-center ring-2 ring-blue-500/20 shadow-xs flex-shrink-0">
                     <img
-                      src={user.payoutAccounts ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' : ''}
+                      src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'}
                       alt={user.fullName}
                       className="w-full h-full object-cover"
                     />
@@ -146,8 +209,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onClick={() => {
                         onNavigate('profile');
                         setUserDropdownOpen(false);
+                        setMobileMenuOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2"
+                      className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2 cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-[18px]">account_circle</span>
                       <span>{t('myProfile')}</span>
@@ -156,8 +220,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onClick={() => {
                         onNavigate('admin');
                         setUserDropdownOpen(false);
+                        setMobileMenuOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2"
+                      className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2 cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
                       <span>{t('adminControlCenter')}</span>
@@ -167,8 +232,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onClick={() => {
                         onToggleLogin();
                         setUserDropdownOpen(false);
+                        setMobileMenuOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs font-medium text-red-600 hover:bg-red-50 flex items-center gap-2"
+                      className="w-full text-left px-4 py-2 text-xs font-medium text-red-600 hover:bg-red-50 flex items-center gap-2 cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-[18px]">logout</span>
                       <span>{t('logOut')}</span>
@@ -180,13 +246,21 @@ export const Navbar: React.FC<NavbarProps> = ({
           ) : (
             <div className="flex items-center gap-1.5 sm:gap-2">
               <button
-                onClick={() => onNavigate('login')}
+                onClick={() => {
+                  onNavigate('login');
+                  setMobileMenuOpen(false);
+                  setUserDropdownOpen(false);
+                }}
                 className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-blue-600 px-2 sm:px-3 py-1.5 sm:py-2 transition-colors cursor-pointer"
               >
                 {t('login')}
               </button>
               <button
-                onClick={() => onNavigate('register')}
+                onClick={() => {
+                  onNavigate('register');
+                  setMobileMenuOpen(false);
+                  setUserDropdownOpen(false);
+                }}
                 className="text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-3.5 sm:px-5 py-1.5 sm:py-2.5 rounded-full shadow-sm shadow-blue-500/30 transition-all hover:shadow-md cursor-pointer whitespace-nowrap"
               >
                 {t('register')}
@@ -196,7 +270,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Three-line Hamburger Menu Button */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            ref={menuButtonRef}
+            onClick={() => {
+              setMobileMenuOpen(!mobileMenuOpen);
+              setUserDropdownOpen(false);
+            }}
             className="p-1.5 sm:p-2 text-slate-700 hover:text-blue-600 hover:bg-slate-100 rounded-xl focus:outline-none cursor-pointer flex-shrink-0 transition-colors border border-slate-200/80"
             aria-label="Toggle menu"
             title="Menu & Language Option"
@@ -208,9 +286,12 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Three-line Menu Drawer (Contains Language Switcher) */}
+      {/* Three-line Menu Drawer (Contains Language Switcher & Navigation Links) */}
       {mobileMenuOpen && (
-        <div className="bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-4 shadow-xl animate-in slide-in-from-top-2 duration-150 max-w-7xl mx-auto">
+        <div
+          ref={menuDrawerRef}
+          className="bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-4 shadow-xl animate-in slide-in-from-top-2 duration-150 max-w-7xl mx-auto z-50 relative"
+        >
           {/* Search Bar inside Menu */}
           <form onSubmit={handleSearchSubmit} className="relative w-full md:hidden">
             <input
@@ -234,7 +315,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </div>
             <button
-              onClick={toggleLanguage}
+              onClick={() => {
+                toggleLanguage();
+                setMobileMenuOpen(false);
+              }}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer"
             >
               <span>{language === 'en' ? 'বাংলা রূপান্তর করুন' : 'Switch to English'}</span>
@@ -259,12 +343,55 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="material-symbols-outlined text-[18px] text-slate-400">chevron_right</span>
               </button>
             ))}
+
+            {/* Account & Profile Options in 3-Line Menu for Mobile */}
+            {isLoggedIn ? (
+              <button
+                onClick={() => {
+                  onNavigate('profile');
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-semibold cursor-pointer transition-colors flex items-center justify-between ${
+                  currentPage === 'profile'
+                    ? 'bg-blue-50 text-blue-600 font-bold'
+                    : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[18px] text-blue-600">account_circle</span>
+                  <span>{t('myProfile')}</span>
+                </div>
+                <span className="material-symbols-outlined text-[18px] text-slate-400">chevron_right</span>
+              </button>
+            ) : (
+              <div className="pt-2 grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => {
+                    onNavigate('login');
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 cursor-pointer text-center"
+                >
+                  {t('login')}
+                </button>
+                <button
+                  onClick={() => {
+                    onNavigate('register');
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 cursor-pointer text-center shadow-xs"
+                >
+                  {t('register')}
+                </button>
+              </div>
+            )}
+
             <button
               onClick={() => {
                 onNavigate('admin');
                 setMobileMenuOpen(false);
               }}
-              className="w-full text-left px-3.5 py-3 rounded-xl text-sm font-bold text-blue-700 bg-blue-50/80 flex items-center justify-between cursor-pointer"
+              className="w-full text-left px-3.5 py-3 rounded-xl text-sm font-bold text-blue-700 bg-blue-50/80 hover:bg-blue-100/80 transition-colors flex items-center justify-between cursor-pointer mt-2"
             >
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
@@ -274,6 +401,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
         </div>
+      )}
+
+      {/* Non-blocking Mobile Backdrop Overlay for Click-Outside Auto Close */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 top-16 sm:top-20 bg-slate-900/20 backdrop-blur-2xs z-30 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
       )}
     </header>
   );

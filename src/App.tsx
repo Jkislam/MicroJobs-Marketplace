@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageType, Job, WithdrawalRequest, UserProfileData, CompletedJobActivity } from './types';
+import { PageType, Job, WithdrawalRequest, UserProfileData, CompletedJobActivity, GmailSubmission } from './types';
 import { INITIAL_JOBS, CATEGORIES_LIST, INITIAL_WITHDRAWALS, MOCK_USER, INITIAL_COMPLETED_ACTIVITIES } from './data/mockData';
 import { LanguageProvider } from './context/LanguageContext';
 import { Navbar } from './components/Navbar';
@@ -14,13 +14,19 @@ import { ContactPage } from './pages/ContactPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { EditProfilePage } from './pages/EditProfilePage';
 import { AdminPage } from './pages/AdminPage';
+import { GmailSellPage } from './pages/GmailSellPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [jobs, setJobs] = useState<Job[]>(INITIAL_JOBS);
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>(INITIAL_WITHDRAWALS);
   const [completedActivities, setCompletedActivities] = useState<CompletedJobActivity[]>(INITIAL_COMPLETED_ACTIVITIES);
+  const [gmailSubmissions, setGmailSubmissions] = useState<GmailSubmission[]>(() => {
+    const saved = localStorage.getItem('microjobs_gmail_submissions');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
@@ -72,12 +78,24 @@ export default function App() {
   }) => {
     const formattedUsername = details.username ? (details.username.startsWith('@') ? details.username : `@${details.username}`) : user.username;
     const updatedUser: UserProfileData = {
-      ...user,
-      fullName: details.fullName || user.fullName,
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+      fullName: details.fullName,
       username: formattedUsername,
-      email: details.email || user.email,
-      role: details.role || user.role,
-      memberSince: 'Oct 2026'
+      email: details.email,
+      phone: '',
+      country: 'Bangladesh',
+      bio: '',
+      role: details.role || 'worker',
+      memberSince: 'Oct 2026',
+      kycLevel: 'KYC Level 1',
+      completedTasks: 0,
+      totalEarnings: 0,
+      jobsPosted: 0,
+      overallRating: 0,
+      reviewsCount: 0,
+      isActivated: false,
+      activationStatus: 'none',
+      payoutAccounts: []
     };
     setUser(updatedUser);
     localStorage.setItem('microjobs_user', JSON.stringify(updatedUser));
@@ -169,7 +187,56 @@ export default function App() {
     );
     showToast(`Withdrawal ${id} rejected.`);
   };
+  const handleApproveGmailSubmission = (id: string, updatedReward: number) => {
+    setGmailSubmissions((prev) => {
+      const updated = prev.map((sub) => {
+        if (sub.id === id) {
+          const isCurrentUser = sub.userEmail === user.email;
+          if (isCurrentUser) {
+            setUser((prevUser) => {
+              const newUser = {
+                ...prevUser,
+                completedTasks: prevUser.completedTasks + 1,
+                totalEarnings: prevUser.totalEarnings + updatedReward
+              };
+              localStorage.setItem('microjobs_user', JSON.stringify(newUser));
+              return newUser;
+            });
+            
+            const newActivity: CompletedJobActivity = {
+              id: `cmp-gmail-${Date.now()}`,
+              userName: sub.userName,
+              userAvatar: user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+              jobTitle: `Gmail Sale: ${sub.gmailAddress}`,
+              category: 'Gmail Sell',
+              earnedAmount: updatedReward,
+              completedAt: 'Just now'
+            };
+            setCompletedActivities((prevAct) => [newActivity, ...prevAct]);
+          }
+          return { ...sub, status: 'approved' as const, reward: updatedReward };
+        }
+        return sub;
+      });
+      localStorage.setItem('microjobs_gmail_submissions', JSON.stringify(updated));
+      return updated;
+    });
+    showToast(`Gmail submission approved! Credited ৳${updatedReward} to user.`);
+  };
 
+  const handleRejectGmailSubmission = (id: string) => {
+    setGmailSubmissions((prev) => {
+      const updated = prev.map((sub) => {
+        if (sub.id === id) {
+          return { ...sub, status: 'rejected' as const };
+        }
+        return sub;
+      });
+      localStorage.setItem('microjobs_gmail_submissions', JSON.stringify(updated));
+      return updated;
+    });
+    showToast('Gmail submission rejected.');
+  };
   return (
     <LanguageProvider>
       <div className="min-h-screen flex flex-col bg-[#faf8ff] text-[#131b2e] selection:bg-blue-600 selection:text-white font-sans">
@@ -205,8 +272,37 @@ export default function App() {
 
           {currentPage === 'find-jobs' && (
             <FindJobsPage
-              jobs={jobs}
-              onSelectJob={(job) => setSelectedJob(job)}
+              categories={CATEGORIES_LIST}
+              onNavigate={handleNavigate}
+            />
+          )}
+
+          {currentPage === 'gmail-sell' && (
+            <GmailSellPage
+              onNavigate={handleNavigate}
+              onSubmitGmail={(gmailAddress, pass, fname, lname, note) => {
+                const newSubmission: GmailSubmission = {
+                  id: `gsub-${Date.now()}`,
+                  gmailAddress,
+                  passwordInput: pass,
+                  fname,
+                  lname,
+                  note: note || '',
+                  reward: 50.00,
+                  status: 'pending',
+                  submittedAt: new Date().toLocaleString(),
+                  userEmail: user.email,
+                  userName: user.fullName
+                };
+                
+                setGmailSubmissions((prev) => {
+                  const updated = [newSubmission, ...prev];
+                  localStorage.setItem('microjobs_gmail_submissions', JSON.stringify(updated));
+                  return updated;
+                });
+                
+                showToast('Gmail account submitted! ৳50 reward pending review.');
+              }}
             />
           )}
 
@@ -240,6 +336,8 @@ export default function App() {
           {currentPage === 'profile' && (
             <ProfilePage
               user={user}
+              withdrawals={withdrawals}
+              onNavigate={handleNavigate}
               onUpdateUser={(updated) => {
                 setUser(updated);
                 localStorage.setItem('microjobs_user', JSON.stringify(updated));
@@ -248,15 +346,36 @@ export default function App() {
             />
           )}
 
+          {currentPage === 'edit-profile' && (
+            <EditProfilePage
+              user={user}
+              onNavigate={handleNavigate}
+              onUpdateUser={(updated) => {
+                setUser(updated);
+                localStorage.setItem('microjobs_user', JSON.stringify(updated));
+                showToast('Profile information updated successfully!');
+              }}
+            />
+          )}
+
           {currentPage === 'admin' && (
             <AdminPage
               jobs={jobs}
               withdrawals={withdrawals}
+              gmailSubmissions={gmailSubmissions}
               onNavigate={handleNavigate}
               onApproveJob={handleApproveJob}
               onRejectJob={handleRejectJob}
               onApproveWithdrawal={handleApproveWithdrawal}
               onRejectWithdrawal={handleRejectWithdrawal}
+              onApproveGmailSubmission={handleApproveGmailSubmission}
+              onRejectGmailSubmission={handleRejectGmailSubmission}
+              currentUser={user}
+              onUpdateUser={(updated) => {
+                setUser(updated);
+                localStorage.setItem('microjobs_user', JSON.stringify(updated));
+                showToast('Account activation updated!');
+              }}
             />
           )}
         </main>

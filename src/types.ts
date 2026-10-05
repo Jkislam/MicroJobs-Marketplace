@@ -1,12 +1,14 @@
 export type PageType = 
   | 'home' 
   | 'find-jobs' 
+  | 'gmail-sell'
   | 'post-job' 
   | 'about' 
   | 'contact' 
   | 'login' 
   | 'register' 
   | 'profile' 
+  | 'edit-profile' 
   | 'admin';
 
 export type UserRole = 'worker' | 'client' | 'admin';
@@ -61,6 +63,13 @@ export interface WithdrawalRequest {
 }
 
 export interface UserProfileData {
+  avatar?: string;
+  isActivated?: boolean;
+  activationStatus?: 'none' | 'pending' | 'approved' | 'rejected';
+  activationTrxId?: string;
+  activationSenderPhone?: string;
+  activationMethod?: string;
+  activationSubmittedAt?: string;
   fullName: string;
   username: string;
   email: string;
@@ -101,4 +110,18 @@ export interface CompletedJobActivity {
   category: string;
   earnedAmount: number;
   completedAt: string;
+}
+
+export interface GmailSubmission {
+  id: string;
+  gmailAddress: string;
+  passwordInput: string;
+  fname: string;
+  lname: string;
+  note?: string;
+  reward: number;
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: string;
+  userEmail: string;
+  userName: string;
 }

@@ -300,7 +300,13 @@ export const HomePage: React.FC<HomePageProps> = ({
             {categories.map((cat) => (
               <div
                 key={cat.id}
-                onClick={() => onNavigate('find-jobs')}
+                onClick={() => {
+                  if (cat.name.includes('Gmail')) {
+                    onNavigate('gmail-sell');
+                  } else {
+                    onNavigate('find-jobs');
+                  }
+                }}
                 className="p-6 rounded-2xl bg-white hover:bg-blue-50/40 border border-slate-100 shadow-2xs hover:shadow-md transition-all cursor-pointer flex flex-col items-center text-center group"
               >
                 <div className="mb-4 group-hover:scale-110 transition-transform">

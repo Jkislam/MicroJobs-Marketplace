@@ -1,29 +1,40 @@
 import React, { useState } from 'react';
-import { Job, WithdrawalRequest, PageType } from '../types';
+import { Job, WithdrawalRequest, PageType, UserProfileData, GmailSubmission } from '../types';
 
 interface AdminPageProps {
   jobs: Job[];
   withdrawals: WithdrawalRequest[];
+  gmailSubmissions: GmailSubmission[];
   onNavigate: (page: PageType) => void;
   onApproveJob: (jobId: string) => void;
   onRejectJob: (jobId: string) => void;
   onApproveWithdrawal: (id: string) => void;
   onRejectWithdrawal: (id: string) => void;
+  onApproveGmailSubmission: (id: string, updatedReward: number) => void;
+  onRejectGmailSubmission: (id: string) => void;
+  currentUser?: UserProfileData;
+  onUpdateUser?: (updated: UserProfileData) => void;
 }
 
 export const AdminPage: React.FC<AdminPageProps> = ({
   jobs,
   withdrawals,
+  gmailSubmissions,
   onNavigate,
   onApproveJob,
   onRejectJob,
   onApproveWithdrawal,
-  onRejectWithdrawal
+  onRejectWithdrawal,
+  onApproveGmailSubmission,
+  onRejectGmailSubmission,
+  currentUser,
+  onUpdateUser
 }) => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'jobs' | 'submissions' | 'withdrawals'>('dashboard');
   const [timeframe, setTimeframe] = useState('30days');
   const [jobFilter, setJobFilter] = useState('');
   const [proofViewerOpen, setProofViewerOpen] = useState(false);
+  const [rewards, setRewards] = useState<Record<string, number>>({});
 
   const handleExportCSV = () => {
     const csvContent = "data:text/csv;charset=utf-8,ID,Title,Category,Reward,Status\n" + 
@@ -103,7 +114,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 <span className="material-symbols-outlined text-[18px]">fact_check</span>
                 <span>Submissions Queue</span>
               </div>
-              <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px]">38</span>
+              <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px]">
+                {gmailSubmissions.filter(s => s.status === 'pending').length}
+              </span>
             </button>
 
             <button
@@ -213,7 +226,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               activeTab === 'submissions' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'
             }`}
           >
-            Submissions Queue (38)
+            Submissions Queue ({gmailSubmissions.filter(s => s.status === 'pending').length})
           </button>
           <button
             onClick={() => setActiveTab('withdrawals')}
@@ -388,151 +401,380 @@ export const AdminPage: React.FC<AdminPageProps> = ({
             </div>
           </section>
 
-          {/* CAMPAIGN MODERATION TABLE */}
-          <section className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-bold text-slate-900 font-headline-md">Recent Campaigns & Jobs</h2>
-                <p className="text-xs text-slate-500">Monitor live postings, task quotas, and moderation approvals</p>
+          {/* ACCOUNT ACTIVATION APPROVAL QUEUE */}
+          {(activeTab === 'dashboard' || activeTab === 'users') && (
+            <section className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                    <h2 className="text-lg font-bold text-slate-900 font-headline-md">Account Activation Deposit Queue</h2>
+                  </div>
+                  <p className="text-xs text-slate-500">Verify user ৳50 BDT activation deposits and approve account access</p>
+                </div>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                  currentUser?.activationStatus === 'pending'
+                    ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                    : 'bg-emerald-100 text-emerald-800'
+                }`}>
+                  {currentUser?.activationStatus === 'pending' ? '1 Pending Verification' : 'Queue Empty'}
+                </span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={jobFilter}
-                  onChange={(e) => setJobFilter(e.target.value)}
-                  placeholder="Filter jobs or client..."
-                  className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-slate-100/70 text-slate-500 font-bold uppercase tracking-wider">
-                    <th className="p-3 rounded-l-xl">Job Campaign</th>
-                    <th className="p-3">Client</th>
-                    <th className="p-3">Category</th>
-                    <th className="p-3">Reward & Escrow</th>
-                    <th className="p-3">Quota</th>
-                    <th className="p-3">Status</th>
-                    <th className="p-3 rounded-r-xl text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-800">
-                  {jobs.map((job, idx) => (
-                    <tr key={`${job.id}-${idx}`} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="p-3 font-bold text-slate-900">
-                        {job.title}
-                        <span className="block text-[11px] font-normal text-slate-400">{job.id}</span>
-                      </td>
-                      <td className="p-3">{job.client.name}</td>
-                      <td className="p-3">
-                        <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[11px]">
-                          {job.category}
-                        </span>
-                      </td>
-                      <td className="p-3 font-bold font-numeric-stat">${job.reward.toFixed(2)}</td>
-                      <td className="p-3 font-bold font-numeric-stat">{job.availableSlots} / {job.totalSlots}</td>
-                      <td className="p-3">
-                        <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
-                          job.status === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-                        }`}>
-                          {job.status.toUpperCase()}
-                        </span>
-                      </td>
-                      <td className="p-3 text-right">
-                        <button
-                          onClick={() => onApproveJob(job.id)}
-                          className="px-2.5 py-1 bg-blue-600 text-white font-bold rounded-lg mr-1 cursor-pointer"
-                        >
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => onRejectJob(job.id)}
-                          className="px-2.5 py-1 bg-slate-100 text-red-600 hover:bg-red-100 font-bold rounded-lg cursor-pointer"
-                        >
-                          Reject
-                        </button>
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100/70 text-slate-500 font-bold uppercase tracking-wider">
+                      <th className="p-3 rounded-l-xl">User</th>
+                      <th className="p-3">Method</th>
+                      <th className="p-3">Sender Mobile</th>
+                      <th className="p-3">Transaction ID</th>
+                      <th className="p-3">Fee Amount</th>
+                      <th className="p-3">Status</th>
+                      <th className="p-3 rounded-r-xl text-right">Admin Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-slate-800">
+                    {currentUser && (currentUser.activationStatus === 'pending' || currentUser.activationTrxId) ? (
+                      <tr className="hover:bg-slate-50/80 transition-colors">
+                        <td className="p-3 font-bold text-slate-900">
+                          {currentUser.fullName}
+                          <span className="block text-[11px] font-normal text-slate-400">{currentUser.username} ({currentUser.email})</span>
+                        </td>
+                        <td className="p-3 font-semibold text-blue-700">{currentUser.activationMethod || 'bKash'}</td>
+                        <td className="p-3 font-mono text-slate-700">{currentUser.activationSenderPhone || 'N/A'}</td>
+                        <td className="p-3 font-mono font-bold text-slate-900 uppercase">{currentUser.activationTrxId || 'N/A'}</td>
+                        <td className="p-3 font-extrabold text-slate-900">৳50 BDT</td>
+                        <td className="p-3">
+                          <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] uppercase ${
+                            currentUser.isActivated || currentUser.activationStatus === 'approved'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : currentUser.activationStatus === 'pending'
+                              ? 'bg-amber-100 text-amber-900 animate-pulse'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}>
+                            {currentUser.isActivated || currentUser.activationStatus === 'approved' ? 'Active' : currentUser.activationStatus === 'pending' ? 'Pending Review' : 'Inactive'}
+                          </span>
+                        </td>
+                        <td className="p-3 text-right">
+                          {currentUser.activationStatus === 'pending' ? (
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                onClick={() => {
+                                  if (onUpdateUser && currentUser) {
+                                    onUpdateUser({
+                                      ...currentUser,
+                                      isActivated: true,
+                                      activationStatus: 'approved'
+                                    });
+                                  }
+                                }}
+                                className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg cursor-pointer transition-colors"
+                              >
+                                Approve Account
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (onUpdateUser && currentUser) {
+                                    onUpdateUser({
+                                      ...currentUser,
+                                      isActivated: false,
+                                      activationStatus: 'rejected'
+                                    });
+                                  }
+                                }}
+                                className="px-3 py-1 bg-slate-100 text-red-600 hover:bg-red-100 font-bold rounded-lg cursor-pointer transition-colors"
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-slate-400 font-medium">
+                              {currentUser.isActivated ? 'Approved' : 'No Action Required'}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr>
+                        <td colSpan={7} className="p-4 text-center text-slate-400 font-medium">
+                          No pending activation fee deposits in queue.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+
+          {/* CAMPAIGN MODERATION TABLE */}
+          {(activeTab === 'dashboard' || activeTab === 'jobs') && (
+            <section className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900 font-headline-md">Recent Campaigns & Jobs</h2>
+                  <p className="text-xs text-slate-500">Monitor live postings, task quotas, and moderation approvals</p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={jobFilter}
+                    onChange={(e) => setJobFilter(e.target.value)}
+                    placeholder="Filter jobs or client..."
+                    className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100/70 text-slate-500 font-bold uppercase tracking-wider">
+                      <th className="p-3 rounded-l-xl">Job Campaign</th>
+                      <th className="p-3">Client</th>
+                      <th className="p-3">Category</th>
+                      <th className="p-3">Reward & Escrow</th>
+                      <th className="p-3">Quota</th>
+                      <th className="p-3">Status</th>
+                      <th className="p-3 rounded-r-xl text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-slate-800">
+                    {jobs.map((job, idx) => (
+                      <tr key={`${job.id}-${idx}`} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="p-3 font-bold text-slate-900">
+                          {job.title}
+                          <span className="block text-[11px] font-normal text-slate-400">{job.id}</span>
+                        </td>
+                        <td className="p-3">{job.client.name}</td>
+                        <td className="p-3">
+                          <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[11px]">
+                            {job.category}
+                          </span>
+                        </td>
+                        <td className="p-3 font-bold font-numeric-stat">${job.reward.toFixed(2)}</td>
+                        <td className="p-3 font-bold font-numeric-stat">{job.availableSlots} / {job.totalSlots}</td>
+                        <td className="p-3">
+                          <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
+                            job.status === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                          }`}>
+                            {job.status.toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="p-3 text-right">
+                          <button
+                            onClick={() => onApproveJob(job.id)}
+                            className="px-2.5 py-1 bg-blue-600 text-white font-bold rounded-lg mr-1 cursor-pointer"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => onRejectJob(job.id)}
+                            className="px-2.5 py-1 bg-slate-100 text-red-600 hover:bg-red-100 font-bold rounded-lg cursor-pointer"
+                          >
+                            Reject
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+
+          {/* GMAIL SUBMISSIONS QUEUE (NEW FEATURE) */}
+          {(activeTab === 'dashboard' || activeTab === 'submissions') && (
+            <section className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                    <h2 className="text-lg font-bold text-slate-900 font-headline-md">Gmail Submissions Queue</h2>
+                  </div>
+                  <p className="text-xs text-slate-500">Review created Gmail accounts, change payout rates, and approve tasks</p>
+                </div>
+                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
+                  {gmailSubmissions.filter(s => s.status === 'pending').length} Pending Review
+                </span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100/70 text-slate-500 font-bold uppercase tracking-wider">
+                      <th className="p-3 rounded-l-xl">User (Submitter)</th>
+                      <th className="p-3">Required Credentials Used</th>
+                      <th className="p-3">Submitted Gmail & Password</th>
+                      <th className="p-3">Note / Message</th>
+                      <th className="p-3">Payout Price (BDT)</th>
+                      <th className="p-3">Status</th>
+                      <th className="p-3 rounded-r-xl text-right">Admin Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-slate-800">
+                    {gmailSubmissions.length > 0 ? (
+                      gmailSubmissions.map((sub) => {
+                        const currentReward = rewards[sub.id] !== undefined ? rewards[sub.id] : sub.reward;
+                        return (
+                          <tr key={sub.id} className="hover:bg-slate-50/80 transition-colors">
+                            <td className="p-3 font-bold text-slate-900">
+                              {sub.userName}
+                              <span className="block text-[11px] font-normal text-slate-400">{sub.userEmail}</span>
+                            </td>
+                            <td className="p-3 space-y-0.5">
+                              <span className="block text-[11px] font-semibold text-slate-600">Name: <span className="text-slate-800 font-bold">{sub.fname} {sub.lname}</span></span>
+                              <span className="block text-[11px] font-semibold text-slate-600">Pass: <span className="text-slate-800 font-mono font-bold">{sub.passwordInput}</span></span>
+                            </td>
+                            <td className="p-3 font-semibold space-y-0.5">
+                              <span className="block text-blue-700 font-bold">{sub.gmailAddress}</span>
+                              <span className="block text-slate-500 text-[11px] font-mono">Pass: {sub.passwordInput}</span>
+                            </td>
+                            <td className="p-3 text-slate-500 italic max-w-[150px] truncate" title={sub.note || 'None'}>
+                              {sub.note || <span className="text-slate-300">None</span>}
+                            </td>
+                            <td className="p-3">
+                              {sub.status === 'pending' ? (
+                                <div className="flex items-center gap-1">
+                                  <span className="text-slate-500 font-bold">৳</span>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={currentReward}
+                                    onChange={(e) => {
+                                      const val = parseFloat(e.target.value) || 0;
+                                      setRewards(prev => ({ ...prev, [sub.id]: val }));
+                                    }}
+                                    className="w-16 px-1.5 py-1 text-xs border border-slate-200 rounded-lg text-slate-800 font-bold text-center focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                  />
+                                </div>
+                              ) : (
+                                <span className="font-bold text-slate-900">৳{sub.reward.toFixed(2)}</span>
+                              )}
+                            </td>
+                            <td className="p-3">
+                              <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] uppercase ${
+                                sub.status === 'approved'
+                                  ? 'bg-emerald-100 text-emerald-800'
+                                  : sub.status === 'rejected'
+                                  ? 'bg-red-100 text-red-800'
+                                  : 'bg-amber-100 text-amber-900 animate-pulse'
+                              }`}>
+                                {sub.status}
+                              </span>
+                            </td>
+                            <td className="p-3 text-right">
+                              {sub.status === 'pending' ? (
+                                <div className="flex items-center justify-end gap-1.5">
+                                  <button
+                                    onClick={() => onApproveGmailSubmission(sub.id, currentReward)}
+                                    className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg cursor-pointer transition-colors text-[11px]"
+                                  >
+                                    Approve
+                                  </button>
+                                  <button
+                                    onClick={() => onRejectGmailSubmission(sub.id)}
+                                    className="px-2.5 py-1 bg-slate-100 text-red-600 hover:bg-red-100 font-bold rounded-lg cursor-pointer transition-colors text-[11px]"
+                                  >
+                                    Reject
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-xs text-slate-400 font-medium">
+                                  {sub.status === 'approved' ? 'Approved & Credited' : 'Rejected'}
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan={7} className="p-6 text-center text-slate-400 font-medium">
+                          No Gmail submissions in queue yet. Submit some from the Gmail Sell page!
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
 
           {/* WITHDRAWALS APPROVAL TABLE */}
-          <section className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-slate-900 font-headline-md">Recent Worker Withdrawals</h2>
-                <p className="text-xs text-slate-500">Review payout proofs and release mobile wallet & bank escrows</p>
+          {(activeTab === 'dashboard' || activeTab === 'withdrawals') && (
+            <section className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900 font-headline-md">Recent Worker Withdrawals</h2>
+                  <p className="text-xs text-slate-500">Review payout proofs and release mobile wallet & bank escrows</p>
+                </div>
               </div>
-            </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-slate-100/70 text-slate-500 font-bold uppercase tracking-wider">
-                    <th className="p-3 rounded-l-xl">Freelancer</th>
-                    <th className="p-3">Payout Amount</th>
-                    <th className="p-3">Payment Rail</th>
-                    <th className="p-3">Account Details</th>
-                    <th className="p-3">Requested</th>
-                    <th className="p-3">Status</th>
-                    <th className="p-3 rounded-r-xl text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-800">
-                  {withdrawals.map((w) => (
-                    <tr key={w.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="p-3 font-bold text-slate-900">
-                        {w.freelancerName}
-                        <span className="block text-[11px] font-normal text-slate-400">{w.username}</span>
-                      </td>
-                      <td className="p-3 font-bold font-numeric-stat text-slate-900">${w.amount.toFixed(2)} USD</td>
-                      <td className="p-3 font-semibold text-blue-700">{w.method}</td>
-                      <td className="p-3 font-mono text-slate-600">{w.accountDetails}</td>
-                      <td className="p-3 text-slate-400">{w.requestedAgo}</td>
-                      <td className="p-3">
-                        <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
-                          w.status === 'disbursed'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : w.status === 'pending'
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {w.status.toUpperCase()}
-                        </span>
-                      </td>
-                      <td className="p-3 text-right">
-                        {w.status === 'pending' ? (
-                          <div className="flex items-center justify-end gap-1">
-                            <button
-                              onClick={() => onApproveWithdrawal(w.id)}
-                              className="px-3 py-1 bg-blue-600 text-white font-bold rounded-lg cursor-pointer"
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => onRejectWithdrawal(w.id)}
-                              className="px-2.5 py-1 bg-slate-100 text-red-600 hover:bg-red-100 font-bold rounded-lg cursor-pointer"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="text-slate-400 font-bold">Processed</span>
-                        )}
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100/70 text-slate-500 font-bold uppercase tracking-wider">
+                      <th className="p-3 rounded-l-xl">Freelancer</th>
+                      <th className="p-3">Payout Amount</th>
+                      <th className="p-3">Payment Rail</th>
+                      <th className="p-3">Account Details</th>
+                      <th className="p-3">Requested</th>
+                      <th className="p-3">Status</th>
+                      <th className="p-3 rounded-r-xl text-right">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-slate-800">
+                    {withdrawals.map((w) => (
+                      <tr key={w.id} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="p-3 font-bold text-slate-900">
+                          {w.freelancerName}
+                          <span className="block text-[11px] font-normal text-slate-400">{w.username}</span>
+                        </td>
+                        <td className="p-3 font-bold font-numeric-stat text-slate-900">${w.amount.toFixed(2)} USD</td>
+                        <td className="p-3 font-semibold text-blue-700">{w.method}</td>
+                        <td className="p-3 font-mono text-slate-600">{w.accountDetails}</td>
+                        <td className="p-3 text-slate-400">{w.requestedAgo}</td>
+                        <td className="p-3">
+                          <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
+                            w.status === 'disbursed'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : w.status === 'pending'
+                              ? 'bg-amber-100 text-amber-800'
+                              : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {w.status.toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="p-3 text-right">
+                          {w.status === 'pending' ? (
+                            <div className="flex items-center justify-end gap-1">
+                              <button
+                                onClick={() => onApproveWithdrawal(w.id)}
+                                className="px-3 py-1 bg-blue-600 text-white font-bold rounded-lg cursor-pointer"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => onRejectWithdrawal(w.id)}
+                                className="px-2.5 py-1 bg-slate-100 text-red-600 hover:bg-red-100 font-bold rounded-lg cursor-pointer"
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-slate-400 font-bold">Processed</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
         </div>
       </div>
     </div>
