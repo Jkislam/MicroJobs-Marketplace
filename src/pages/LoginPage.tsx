@@ -3,7 +3,7 @@ import { PageType } from '../types';
 
 interface LoginPageProps {
   onNavigate: (page: PageType) => void;
-  onLoginSuccess: () => void;
+  onLoginSuccess: (email?: string) => void;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLoginSuccess }) => {
@@ -14,7 +14,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLoginSuccess
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onLoginSuccess();
+    onLoginSuccess(email);
     onNavigate('profile');
   };
 
@@ -118,7 +118,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLoginSuccess
         <button
           type="button"
           onClick={() => {
-            onLoginSuccess();
+            onLoginSuccess('user@gmail.com');
             onNavigate('profile');
           }}
           className="w-full h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-3 cursor-pointer"

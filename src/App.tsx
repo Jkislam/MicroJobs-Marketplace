@@ -20,11 +20,28 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [jobs, setJobs] = useState<Job[]>(INITIAL_JOBS);
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>(INITIAL_WITHDRAWALS);
-  const [user, setUser] = useState<UserProfileData>(MOCK_USER);
   const [completedActivities, setCompletedActivities] = useState<CompletedJobActivity[]>(INITIAL_COMPLETED_ACTIVITIES);
 
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+
+  // Local state persistence for Login & Register
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
+    const saved = localStorage.getItem('microjobs_is_logged_in');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
+  const [user, setUser] = useState<UserProfileData>(() => {
+    const saved = localStorage.getItem('microjobs_user');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        // fallback
+      }
+    }
+    return MOCK_USER;
+  });
+
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -32,6 +49,48 @@ export default function App() {
     setTimeout(() => {
       setToastMessage(null);
     }, 3000);
+  };
+
+  const handleLoginSuccess = (loginEmail?: string) => {
+    setIsLoggedIn(true);
+    localStorage.setItem('microjobs_is_logged_in', JSON.stringify(true));
+    if (loginEmail) {
+      setUser((prev) => {
+        const updated = { ...prev, email: loginEmail };
+        localStorage.setItem('microjobs_user', JSON.stringify(updated));
+        return updated;
+      });
+    }
+    showToast('Logged in successfully!');
+  };
+
+  const handleRegisterSuccess = (details: {
+    fullName: string;
+    username: string;
+    email: string;
+    role: 'worker' | 'client';
+  }) => {
+    const formattedUsername = details.username ? (details.username.startsWith('@') ? details.username : `@${details.username}`) : user.username;
+    const updatedUser: UserProfileData = {
+      ...user,
+      fullName: details.fullName || user.fullName,
+      username: formattedUsername,
+      email: details.email || user.email,
+      role: details.role || user.role,
+      memberSince: 'Oct 2026'
+    };
+    setUser(updatedUser);
+    localStorage.setItem('microjobs_user', JSON.stringify(updatedUser));
+    setIsLoggedIn(true);
+    localStorage.setItem('microjobs_is_logged_in', JSON.stringify(true));
+    showToast('Account created successfully!');
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.setItem('microjobs_is_logged_in', JSON.stringify(false));
+    showToast('Logged out successfully.');
+    handleNavigate('login');
   };
 
   const handleNavigate = (page: PageType) => {
@@ -129,7 +188,7 @@ export default function App() {
           user={user}
           onSearch={() => handleNavigate('find-jobs')}
           isLoggedIn={isLoggedIn}
-          onToggleLogin={() => setIsLoggedIn(!isLoggedIn)}
+          onToggleLogin={handleLogout}
         />
 
         {/* Main Content Router */}
@@ -167,20 +226,14 @@ export default function App() {
           {currentPage === 'login' && (
             <LoginPage
               onNavigate={handleNavigate}
-              onLoginSuccess={() => {
-                setIsLoggedIn(true);
-                showToast('Logged in successfully!');
-              }}
+              onLoginSuccess={handleLoginSuccess}
             />
           )}
 
           {currentPage === 'register' && (
             <RegisterPage
               onNavigate={handleNavigate}
-              onRegisterSuccess={() => {
-                setIsLoggedIn(true);
-                showToast('Account created successfully!');
-              }}
+              onRegisterSuccess={handleRegisterSuccess}
             />
           )}
 
@@ -189,6 +242,7 @@ export default function App() {
               user={user}
               onUpdateUser={(updated) => {
                 setUser(updated);
+                localStorage.setItem('microjobs_user', JSON.stringify(updated));
                 showToast('Profile settings saved.');
               }}
             />

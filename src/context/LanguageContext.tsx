@@ -118,12 +118,12 @@ const translations: Record<string, { en: string; bn: string }> = {
     bn: 'অবশ্যই! আপনি চাইলে যেকোনো সময় ক্লায়েন্ট হিসেবে কাজ পোস্ট করতে পারেন, ফ্রিল্যান্সার হায়ার করতে পারেন কিংবা সার্ভিস ও ভেরিফাইড অ্যাকাউন্ট বেচাকেনা করতে পারবেন।' 
   },
   faqQ6: { 
-    en: 'Is there any registration fee or hidden charge?', 
-    bn: 'রেজিস্ট্রেশন করতে কোনো টাকা লাগে কি অথবা কোনো হিডেন চার্জ আছে?' 
+    en: 'What is the account registration fee?', 
+    bn: 'অ্যাকাউন্ট রেজিস্ট্রেশন করতে কত টাকা লাগবে?' 
   },
   faqA6: { 
-    en: 'No! Registration is 100% free forever for all workers. There are no subscription fees or hidden costs, and minimum payout thresholds are kept very low for smooth cashouts.', 
-    bn: 'না! এখানে ফ্রিল্যান্সারদের জন্য অ্যাকাউন্ট তৈরি ১০০% ফ্রী। কোনো প্রকার লুকায়িত ফি বা মাসিক চার্জ নেই এবং অত্যন্ত কম ব্যালেন্সেও দ্রুত পেমেন্ট তুলে নেওয়া যায়।' 
+    en: 'Account registration fee is 50 BDT. Once registered, you get full access to all micro-jobs, tasks, and instant withdrawal facilities with no hidden monthly charges.', 
+    bn: 'অ্যাকাউন্ট রেজিস্ট্রেশন করতে ৫০ টাকা লাগবে। রেজিস্ট্রেশন সম্পন্ন করার পর আপনি সকল প্রকার কাজ, মাইক্রো-জব এবং দ্রুত টাকা উইথড্র করার সুবিধা পাবেন।' 
   },
 
   // Find Jobs Page

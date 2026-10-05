@@ -60,25 +60,18 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
     <div className="w-full bg-slate-50/60 py-8 lg:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Context & Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-wider mb-1">
-              <span>Account Settings</span>
-              <span className="text-slate-300">•</span>
-              <span className="text-slate-500">Profile Overview</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-display">
-              My Profile
-            </h1>
-            <p className="text-slate-600 text-xs sm:text-sm mt-1">
-              Manage your personal information, task statistics, payment methods, and account security.
-            </p>
+        <div>
+          <div className="flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-wider mb-1">
+            <span>Account Settings</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-500">Profile Overview</span>
           </div>
-
-          <div className="inline-flex items-center gap-2 bg-white border border-slate-200/80 px-4 py-2 rounded-full shadow-xs">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-xs font-bold text-slate-900">Profile Completeness: 95%</span>
-          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-display">
+            My Profile
+          </h1>
+          <p className="text-slate-600 text-xs sm:text-sm mt-1">
+            Manage your personal information, task statistics, payment methods, and account security.
+          </p>
         </div>
 
         {/* PROFILE HEADER CARD */}
@@ -123,22 +116,12 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
                   <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-medium">
                     Member Since: {user.memberSince}
                   </span>
-                  <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 font-bold">
-                    {user.kycLevel}
-                  </span>
                 </div>
               </div>
             </div>
 
             {/* Actions */}
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => alert('Public view active.')}
-                className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-800 hover:bg-slate-200 font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
-              >
-                <span className="material-symbols-outlined text-[18px]">visibility</span>
-                <span>Public View</span>
-              </button>
               <button
                 onClick={() => alert('Edit mode activated below.')}
                 className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm hover:shadow transition-all cursor-pointer flex items-center gap-1.5"
@@ -150,8 +133,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
           </div>
         </div>
 
-        {/* 4 STAT CARDS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* STAT CARDS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Completed Tasks</span>
@@ -174,34 +157,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
               <span className="text-xs font-bold text-blue-600">USD</span>
             </div>
             <p className="text-[11px] text-slate-500">$46.20 available in Escrow / Wallet</p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Jobs Posted</span>
-              <span className="material-symbols-outlined text-blue-600 text-[20px]">assignment_turned_in</span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-slate-900 font-numeric-stat">{user.jobsPosted}</span>
-              <span className="text-xs text-slate-500 font-medium">Campaigns</span>
-            </div>
-            <p className="text-[11px] text-slate-500">Client micro-tasks successfully filled</p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Overall Rating</span>
-              <span className="material-symbols-outlined text-amber-500 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-slate-900 font-numeric-stat">{user.overallRating}</span>
-              <div className="flex text-amber-500 text-xs">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <span key={s} className="material-symbols-outlined text-[15px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                ))}
-              </div>
-            </div>
-            <p className="text-[11px] text-slate-500">Based on {user.reviewsCount} verified client reviews</p>
           </div>
         </div>
 

@@ -3,7 +3,12 @@ import { PageType } from '../types';
 
 interface RegisterPageProps {
   onNavigate: (page: PageType) => void;
-  onRegisterSuccess: () => void;
+  onRegisterSuccess: (details: {
+    fullName: string;
+    username: string;
+    email: string;
+    role: 'worker' | 'client';
+  }) => void;
 }
 
 export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegisterSuccess }) => {
@@ -13,6 +18,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegist
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
 
   const pwdMatches = confirmPassword && password === confirmPassword;
@@ -20,7 +27,12 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegist
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!pwdMatches || !agreed) return;
-    onRegisterSuccess();
+    onRegisterSuccess({
+      fullName,
+      username,
+      email,
+      role
+    });
     onNavigate('profile');
   };
 
@@ -43,56 +55,6 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegist
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Role Selector */}
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
-                  Select Role
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setRole('worker')}
-                    className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
-                      role === 'worker'
-                        ? 'bg-blue-50/80 border-blue-600 text-slate-900 shadow-xs'
-                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between font-bold text-xs mb-1">
-                      <span className="flex items-center gap-1.5">
-                        <span className="material-symbols-outlined text-[18px] text-blue-600">engineering</span>
-                        <span>Worker</span>
-                      </span>
-                      {role === 'worker' && (
-                        <span className="material-symbols-outlined text-blue-600 text-[18px]">check_circle</span>
-                      )}
-                    </div>
-                    <span className="text-[11px] text-slate-500 block">I want to work & earn</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setRole('client')}
-                    className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
-                      role === 'client'
-                        ? 'bg-blue-50/80 border-blue-600 text-slate-900 shadow-xs'
-                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between font-bold text-xs mb-1">
-                      <span className="flex items-center gap-1.5">
-                        <span className="material-symbols-outlined text-[18px] text-blue-600">business_center</span>
-                        <span>Client</span>
-                      </span>
-                      {role === 'client' && (
-                        <span className="material-symbols-outlined text-blue-600 text-[18px]">check_circle</span>
-                      )}
-                    </div>
-                    <span className="text-[11px] text-slate-500 block">I want to hire & post jobs</span>
-                  </button>
-                </div>
-              </div>
-
               {/* Name and Username */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
@@ -136,14 +98,26 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegist
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-800 mb-1">Password</label>
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="At least 8 chars"
-                    className="w-full h-11 px-3.5 rounded-xl bg-slate-50 text-slate-900 text-xs border border-slate-200 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="At least 8 chars"
+                      className="w-full h-11 pl-3.5 pr-10 rounded-xl bg-slate-50 text-slate-900 text-xs border border-slate-200 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none cursor-pointer"
+                      title={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        {showPassword ? 'visibility_off' : 'visibility'}
+                      </span>
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
@@ -154,14 +128,26 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegist
                       </span>
                     )}
                   </div>
-                  <input
-                    type="password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Re-enter password"
-                    className="w-full h-11 px-3.5 rounded-xl bg-slate-50 text-slate-900 text-xs border border-slate-200 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Re-enter password"
+                      className="w-full h-11 pl-3.5 pr-10 rounded-xl bg-slate-50 text-slate-900 text-xs border border-slate-200 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none cursor-pointer"
+                      title={showConfirmPassword ? 'Hide password' : 'Show password'}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        {showConfirmPassword ? 'visibility_off' : 'visibility'}
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
