@@ -15,6 +15,7 @@ const translations: Record<string, { en: string; bn: string }> = {
   findJobs: { en: 'Find Jobs', bn: 'কাজ খুঁজুন' },
   about: { en: 'About', bn: 'আমাদের সম্পর্কে' },
   contact: { en: 'Contact', bn: 'যোগাযোগ' },
+  quran: { en: 'Holy Quran', bn: 'আল-কোরআন' },
   adminConsole: { en: 'Admin Console', bn: 'এডমিন কনসোল' },
   searchPlaceholder: { en: 'Search jobs...', bn: 'কাজ খুঁজুন...' },
   login: { en: 'Login', bn: 'লগইন' },

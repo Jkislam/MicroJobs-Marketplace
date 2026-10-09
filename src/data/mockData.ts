@@ -377,8 +377,8 @@ export const CATEGORIES_LIST: CategoryItem[] = [
     name: 'Telegram Sell',
     iconName: 'send',
     jobsCount: '',
-    rewardRange: '৳80 - ৳350',
-    description: 'Sell aged Telegram accounts & active channels safely.',
+    rewardRange: '৳80 - ৳150',
+    description: 'Sell aged Telegram accounts safely with fast verification.',
     activeJobsNumber: 80
   },
   {
@@ -386,8 +386,8 @@ export const CATEGORIES_LIST: CategoryItem[] = [
     name: 'Reading the Holy Quran',
     iconName: 'menu_book',
     jobsCount: '',
-    rewardRange: '$0.50 - $3.00',
-    description: 'Reciting and studying the Holy Quran.',
+    rewardRange: '10 Coins / 10 Mins',
+    description: 'Reciting and studying the Holy Quran. (প্রতি ১০ মিনিটে ১০টি কয়েন)',
     activeJobsNumber: 150
   },
   {

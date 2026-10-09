@@ -307,6 +307,13 @@ export const HomePage: React.FC<HomePageProps> = ({
                     onNavigate('instagram-sell');
                   } else if (cat.name.includes('Telegram')) {
                     onNavigate('telegram-sell');
+                  } else if (
+                    cat.id === 'cat-quran' ||
+                    cat.name.toLowerCase().includes('quran') ||
+                    cat.name.includes('কোরআন') ||
+                    (cat.description && cat.description.toLowerCase().includes('quran'))
+                  ) {
+                    onNavigate('quran');
                   } else {
                     onNavigate('find-jobs');
                   }
@@ -319,6 +326,11 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <h3 className="font-extrabold text-slate-900 text-sm group-hover:text-[#1E62EC] transition-colors mb-1">
                   {cat.name}
                 </h3>
+                {cat.description && (
+                  <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mb-1">
+                    {cat.description}
+                  </p>
+                )}
                 {cat.jobsCount ? (
                   <span className="text-xs text-[#1E62EC] font-semibold">{cat.jobsCount}</span>
                 ) : null}

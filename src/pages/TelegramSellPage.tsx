@@ -21,31 +21,29 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
   const [phoneInput, setPhoneInput] = useState('');
   const [usernameInput, setUsernameInput] = useState('');
   const [twoStepPasswordInput, setTwoStepPasswordInput] = useState('');
-  const [accountType, setAccountType] = useState('Personal Old Account (1-2+ Months)');
-  const [channelLinkInput, setChannelLinkInput] = useState('');
   const [otpContactInput, setOtpContactInput] = useState('');
   const [noteInput, setNoteInput] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(false);
 
   const [submittedList, setSubmittedList] = useState<
-    { phone: string; username: string; type: string; time: string }[]
+    { phone: string; username: string; time: string }[]
   >([]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!phoneInput.trim()) {
-      alert('অনুগ্রহ করে টেলিগ্রাম ফোন নম্বরটি সঠিক কান্ট্রি কোড সহ দিন। (Please enter Telegram phone number)');
+      alert('Please enter your Telegram phone number with country code.');
       return;
     }
 
     if (!otpContactInput.trim()) {
-      alert('এডমিন লগইন করার সময় OTP কোড পাঠানোর মাধ্যম (WhatsApp নম্বর বা কল) উল্লেখ করুন।');
+      alert('Please provide your OTP contact method (WhatsApp number or mobile) so the admin can receive the login code.');
       return;
     }
 
     if (!termsAgreed) {
-      alert('দয়া করে শর্তাবলী মেনে চলার টিকচিহ্নটি দিন। (Please agree to Telegram selling terms)');
+      alert('Please agree to the Telegram selling terms before submitting.');
       return;
     }
 
@@ -54,8 +52,8 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
         phoneInput.trim(),
         usernameInput.trim(),
         twoStepPasswordInput.trim(),
-        accountType,
-        channelLinkInput.trim(),
+        'Personal Account',
+        '',
         otpContactInput.trim(),
         noteInput.trim()
       );
@@ -65,7 +63,6 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
       {
         phone: phoneInput.trim(),
         username: usernameInput.trim() ? `@${usernameInput.trim().replace(/^@/, '')}` : 'N/A',
-        type: accountType,
         time: 'Just now'
       },
       ...prev
@@ -74,12 +71,11 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
     setPhoneInput('');
     setUsernameInput('');
     setTwoStepPasswordInput('');
-    setChannelLinkInput('');
     setOtpContactInput('');
     setNoteInput('');
     setTermsAgreed(false);
 
-    alert('টেলিগ্রাম একাউন্টের তথ্য সফলভাবে জমা হয়েছে! এডমিন শীঘ্রই আপনার দেওয়া নম্বরে যোগাযোগ করে লগইন ও ভেরিফিকেশন সম্পন্ন করবেন এবং একাউন্টে টাকা যোগ হবে।');
+    alert('Telegram account submitted successfully! Admin will contact your provided OTP number to complete login and verify your account. Payout will be added to your balance.');
   };
 
   return (
@@ -92,7 +88,7 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
             className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 font-bold text-xs cursor-pointer w-fit"
           >
             <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-            <span>Back to Categories (ক্যাটেগরিতে ফিরে যান)</span>
+            <span>Back to Categories</span>
           </button>
 
           <div className="flex items-center gap-2">
@@ -108,17 +104,17 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
           </div>
         </div>
 
-        {/* HIGHLIGHTED BENGALI INSTRUCTION NOTICE BANNER AT TOP */}
+        {/* HIGHLIGHTED INSTRUCTION NOTICE BANNER AT TOP */}
         <div className="bg-amber-500/10 border-2 border-amber-500/80 rounded-2xl p-4 sm:p-5 shadow-xs text-slate-900 flex items-start gap-3.5">
           <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs mt-0.5">
             <span className="material-symbols-outlined text-[24px]">warning</span>
           </div>
           <div className="space-y-1">
             <h3 className="text-sm sm:text-base font-extrabold text-amber-900 flex items-center gap-1.5 font-display">
-              <span>বিশেষ নির্দেশনা (Important Notice):</span>
+              <span>Important Notice:</span>
             </h3>
             <p className="text-xs sm:text-sm font-bold text-amber-950 leading-relaxed">
-              টেলিগ্রাম সেল দেওয়ার পূর্বে নিয়মাবলী ভালোভাবে পড়ুন। একাউন্টে টু-স্টেপ ভেরিফিকেশন ক্লাউড পাসওয়ার্ড (Two-Step Cloud Password) দেয়া থাকলে তা নির্ভুলভাবে সাবমিট করতে হবে এবং একাউন্টটি স্প্যামবট রেস্ট্রিকশন মুক্ত হতে হবে। এডমিন লগইনের সময় ওটিপি কোড দিয়ে সহায়তা করতে হবে।
+              Please read the rules carefully before selling your Telegram account. If Two-Step Cloud Password is enabled on your account, make sure to submit it accurately. The account must be free from SpamBot restrictions. You must assist with the OTP code during admin login verification.
             </p>
           </div>
         </div>
@@ -131,23 +127,23 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
               <span>Fast Verification Task</span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight font-display">
-              Telegram Sell Task (টেলিগ্রাম আইডি ও চ্যানেল সেল)
+              Telegram Account Selling
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
-              আপনার পুরানো টেলিগ্রাম একাউন্ট বা চ্যানেল বিক্রি করে সরাসরি ক্যাশ আয় করুন। সঠিক মোবাইল নম্বর ও ক্লাউড পাসওয়ার্ড সাবমিট করুন এবং প্রতিটি একাউন্টে ৳৮০ থেকে ৳৩৫০ পর্যন্ত পান।
+              Earn money by selling your Telegram accounts. Submit your active phone number and cloud password, share the login OTP with the admin, and receive instant cash rewards.
             </p>
           </div>
         </div>
 
-        {/* TERMS & CONDITIONS CARD (শর্তাবলী) */}
+        {/* TERMS & CONDITIONS CARD */}
         <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 shadow-xs space-y-4">
           <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
             <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2 font-display">
               <span className="material-symbols-outlined text-sky-600 text-[22px]">gavel</span>
-              <span>টেলিগ্রাম সেল দেওয়ার প্রয়োজনীয় শর্তাবলী (Required Conditions)</span>
+              <span>Required Conditions for Telegram Selling</span>
             </h2>
             <span className="text-xs font-bold text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full">
-              বাধ্যতামূলক শর্তসমূহ
+              Mandatory Requirements
             </span>
           </div>
 
@@ -156,10 +152,10 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
               <div className="flex items-center gap-2 text-sky-600 font-bold text-xs">
                 <span className="material-symbols-outlined text-[18px]">history</span>
-                <span>১. একাউন্টের বয়স (Account Age)</span>
+                <span>1. Account Age & Status</span>
               </div>
               <p className="text-xs text-slate-600 leading-relaxed">
-                টেলিগ্রাম একাউন্টটি নূন্যতম <strong>১ থেকে ২ মাস পুরানো</strong> ও সচল হতে হবে। সদ্য তৈরি নতুন ব্যান হওয়ার ঝুঁকিপূর্ণ একাউন্ট গ্রহণ করা হবে না।
+                The Telegram account must be at least <strong>1 to 2 months old</strong> and active. Freshly created accounts prone to ban will not be accepted.
               </p>
             </div>
 
@@ -167,10 +163,10 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
               <div className="flex items-center gap-2 text-sky-600 font-bold text-xs">
                 <span className="material-symbols-outlined text-[18px]">verified_user</span>
-                <span>২. স্প্যামবট ফ্রি চেক (@SpamBot Clean)</span>
+                <span>2. SpamBot Clean Check</span>
               </div>
               <p className="text-xs text-slate-600 leading-relaxed">
-                টেলিগ্রামের <strong>@SpamBot</strong> এ মেসেজ দিয়ে নিশ্চিত করুন যে একাউন্ট সম্পূর্ণ রেস্ট্রিকশন মুক্ত এবং কোনো রিপোর্ট নেই।
+                Send a message to <strong>@SpamBot</strong> inside Telegram to confirm that your account is free of limits and reports.
               </p>
             </div>
 
@@ -178,10 +174,10 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
               <div className="flex items-center gap-2 text-sky-600 font-bold text-xs">
                 <span className="material-symbols-outlined text-[18px]">password</span>
-                <span>৩. টু-স্টেপ পাসওয়ার্ড (Two-Step Password)</span>
+                <span>3. Two-Step Password</span>
               </div>
               <p className="text-xs text-slate-600 leading-relaxed">
-                যদি একাউন্টে টু-স্টেপ ক্লাউড পাসওয়ার্ড সেট করা থাকে, তবে সেই <strong>পাসওয়ার্ডটি নির্ভুলভাবে</strong> বক্সে দিতে হবে।
+                If Two-Step Cloud Verification password is set on the account, provide the <strong>exact password</strong> in the form.
               </p>
             </div>
 
@@ -189,21 +185,21 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
               <div className="flex items-center gap-2 text-sky-600 font-bold text-xs">
                 <span className="material-symbols-outlined text-[18px]">phonelink_ring</span>
-                <span>৪. সচল নম্বর ও ওটিপি (Active OTP)</span>
+                <span>4. Active Number & OTP</span>
               </div>
               <p className="text-xs text-slate-600 leading-relaxed">
-                যে নম্বর দিয়ে টেলিগ্রাম খোলা, এডমিন লগইনের সময় সেই নম্বরে যাওয়া <strong>লগইন কোড (OTP)</strong> প্রদান করার জন্য প্রস্তুত থাকতে হবে।
+                Be ready to provide the <strong>login verification code (OTP)</strong> sent to your number when the admin logs in.
               </p>
             </div>
 
             {/* Condition 5 */}
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
               <div className="flex items-center gap-2 text-sky-600 font-bold text-xs">
-                <span className="material-symbols-outlined text-[18px]">campaign</span>
-                <span>৫. চ্যানেল/গ্রুপ শর্ত (Channel / Group)</span>
+                <span className="material-symbols-outlined text-[18px]">phone</span>
+                <span>5. Contact for OTP Delivery</span>
               </div>
               <p className="text-xs text-slate-600 leading-relaxed">
-                চ্যানেল বা গ্রুপ বিক্রি করলে চ্যানেলের সম্পূর্ণ <strong>মালিকানা (Transfer Ownership)</strong> এডমিনকে দিতে হবে।
+                Provide a working WhatsApp number or active phone where the admin can reach you directly to request the OTP.
               </p>
             </div>
 
@@ -211,27 +207,27 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
               <div className="flex items-center gap-2 text-sky-600 font-bold text-xs">
                 <span className="material-symbols-outlined text-[18px]">devices</span>
-                <span>৬. ডিভাইস সেশন সমাপ্তি (Terminate Session)</span>
+                <span>6. Terminate Active Session</span>
               </div>
               <p className="text-xs text-slate-600 leading-relaxed">
-                এডমিন লগইন নিশ্চিত করার পর আপনার ডিভাইস সেটিংস থেকে আগের <strong>সেশনটি ক্লোজ বা লগআউট</strong> করতে হবে।
+                After the admin confirms the login and payment, open Telegram Settings &gt; Devices and <strong>terminate other sessions</strong>.
               </p>
             </div>
           </div>
         </div>
 
-        {/* SUBMISSION FORM CARD (এডমিনকে যে সকল তথ্য দিতে হবে) */}
+        {/* SUBMISSION FORM CARD */}
         <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 shadow-xs space-y-6">
           <div className="pb-3 border-b border-slate-100">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-sky-700 font-bold text-xs mb-1.5">
               <span className="material-symbols-outlined text-[15px]">send</span>
-              <span>এডমিন প্যানেলে তথ্য জমা ফরম</span>
+              <span>Admin Submission Form</span>
             </div>
             <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2 font-display">
               <span>Telegram Account Submission Form</span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              এডমিনকে যাচাই করার জন্য নিচের সকল তথ্য সঠিকভাবে পূরণ করে সাবমিট করুন।
+              Fill in all details accurately for the administrator to review and verify your account.
             </p>
           </div>
 
@@ -240,7 +236,7 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
               {/* Telegram Phone Number */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-slate-700">
-                  টেলিগ্রাম ফোন নম্বর (Telegram Phone with Country Code) <span className="text-red-500">*</span>
+                  Telegram Phone (with Country Code) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <span className="material-symbols-outlined text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 text-[18px]">
@@ -260,7 +256,7 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
               {/* Telegram Username */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-slate-700">
-                  টেলিগ্রাম ইউজারনেম (Telegram Username)
+                  Telegram Username (Optional)
                 </label>
                 <div className="relative">
                   <span className="text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 font-bold text-sm">
@@ -281,7 +277,7 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
               {/* Two-step Verification Password */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-slate-700">
-                  টু-স্টেপ ভেরিফিকেশন পাসওয়ার্ড (Two-Step Cloud Password)
+                  Two-Step Verification Cloud Password (Optional)
                 </label>
                 <div className="relative">
                   <span className="material-symbols-outlined text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 text-[18px]">
@@ -291,35 +287,16 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
                     type="text"
                     value={twoStepPasswordInput}
                     onChange={(e) => setTwoStepPasswordInput(e.target.value)}
-                    placeholder="সেট করা থাকলে পাসওয়ার্ড লিখুন (না থাকলে খালি রাখুন)"
+                    placeholder="Enter cloud password if enabled (otherwise leave blank)"
                     className="w-full pl-9 pr-4 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition-all font-semibold"
                   />
                 </div>
               </div>
 
-              {/* Account Type */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-700">
-                  একাউন্টের ধরন (Account Type) <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={accountType}
-                  onChange={(e) => setAccountType(e.target.value)}
-                  className="w-full px-3 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition-all font-semibold cursor-pointer"
-                >
-                  <option value="Personal Old Account (1-2+ Months)">ব্যক্তিগত পুরানো একাউন্ট (১-২ মাস পুরানো) - ৳৮০</option>
-                  <option value="Aged Account (6+ Months / 1 Year)">খুব পুরানো একাউন্ট (৬ মাস - ১ বছর) - ৳১২০</option>
-                  <option value="Channel / Group (500+ Members)">টেলিগ্রাম চ্যানেল বা গ্রুপ (৫০০+ মেম্বার) - ৳১৫০+</option>
-                  <option value="Virtual / US Number Account">ভার্চুয়াল বা ইউএস নম্বর একাউন্ট - ৳১০০</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* WhatsApp or OTP contact */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-slate-700">
-                  ওটিপি (OTP) দেওয়ার জন্য যোগাযোগ নম্বর (WhatsApp/Mobile) <span className="text-red-500">*</span>
+                  Contact for OTP Delivery (WhatsApp / Mobile) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <span className="material-symbols-outlined text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 text-[18px]">
@@ -330,42 +307,23 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
                     required
                     value={otpContactInput}
                     onChange={(e) => setOtpContactInput(e.target.value)}
-                    placeholder="WhatsApp: +88017... অথবা ফোন নম্বর"
+                    placeholder="WhatsApp: +88017... or active phone number"
                     className="w-full pl-9 pr-4 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition-all font-semibold"
-                  />
-                </div>
-              </div>
-
-              {/* Channel / Group Link (Optional) */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-700">
-                  চ্যানেল বা গ্রুপ লিঙ্ক (যদি চ্যানেল সেল দেন)
-                </label>
-                <div className="relative">
-                  <span className="material-symbols-outlined text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 text-[18px]">
-                    link
-                  </span>
-                  <input
-                    type="text"
-                    value={channelLinkInput}
-                    onChange={(e) => setChannelLinkInput(e.target.value)}
-                    placeholder="https://t.me/your_channel_name"
-                    className="w-full pl-9 pr-4 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition-all"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Note / Additional info */}
+            {/* Note / Additional info (Optional) */}
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-slate-700">
-                অতিরিক্ত নোট বা তথ্য (Additional Note)
+                Additional Note or Info (Optional)
               </label>
               <textarea
                 rows={2}
                 value={noteInput}
                 onChange={(e) => setNoteInput(e.target.value)}
-                placeholder="একাউন্টের বয়স, মেম্বার সংখ্যা বা কোনো বিশেষ তথ্য থাকলে লিখুন..."
+                placeholder="Account age, special details, or any notes for the admin (optional)..."
                 className="w-full px-4 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition-all"
               />
             </div>
@@ -380,7 +338,7 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
                 className="mt-0.5 rounded text-sky-600 focus:ring-sky-500 cursor-pointer"
               />
               <label htmlFor="terms-check-tg" className="text-xs text-slate-700 font-medium cursor-pointer leading-relaxed">
-                আমি স্বীকার করছি যে একাউন্টটি স্প্যামবট রেস্ট্রিকশন মুক্ত, সচল এবং এডমিন লগইন করার সময় আমি ওটিপি দিয়ে সহায়তা করব এবং পরবর্তীতে ডিভাইস থেকে সেশন ক্লোজ করব।
+                I agree that this account is active and free from SpamBot restrictions. I will provide the login OTP code to the admin and terminate previous sessions afterward.
               </label>
             </div>
 
@@ -389,7 +347,7 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
               className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
             >
               <span className="material-symbols-outlined text-[20px]">cloud_upload</span>
-              <span>Submit Telegram Account (এডমিনের কাছে জমা দিন)</span>
+              <span>Submit Telegram Account</span>
             </button>
           </form>
 
@@ -411,7 +369,7 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
                       <span className="text-slate-400 text-[11px]">({item.username})</span>
                     </div>
                     <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
-                      Pending Review (৳৮০)
+                      Pending Review (৳80)
                     </span>
                   </div>
                 ))}
@@ -425,7 +383,7 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
           <div className="pb-3 border-b border-slate-100">
             <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2 font-display">
               <span className="material-symbols-outlined text-amber-500 text-[22px]">menu_book</span>
-              <span>Detailed Guidelines & Instructions (ধাপ অনুযায়ী নির্দেশনাবলী)</span>
+              <span>Detailed Step-by-Step Instructions</span>
             </h2>
           </div>
 
@@ -433,48 +391,48 @@ export const TelegramSellPage: React.FC<TelegramSellPageProps> = ({
             {/* STEP 1 */}
             <div className="bg-slate-50/80 rounded-2xl p-5 border border-slate-100 space-y-3">
               <div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center font-extrabold text-sm">
-                ১
+                1
               </div>
               <h3 className="font-extrabold text-slate-900 text-sm">
-                ১. একাউন্ট স্প্যামবট চেক (Check SpamBot)
+                1. Check SpamBot & Credentials
               </h3>
               <ul className="text-xs text-slate-600 space-y-2 leading-relaxed list-disc pl-4">
-                <li>টেলিগ্রাম সার্চে গিয়ে <strong>@SpamBot</strong> লিখে স্টার্ট দিন।</li>
-                <li>নিশ্চিত করুন মেসেজে "Good news, no limits" লেখা রয়েছে।</li>
-                <li>যদি Two-Step Verification চালু থাকে তবে পাসওয়ার্ডটি মনে রাখুন বা নোট করুন।</li>
-                <li>সিম নম্বরটি যেন সচল থাকে যাতে ওটিপি কোড পাওয়া যায়।</li>
+                <li>Search for <strong>@SpamBot</strong> inside Telegram and tap Start.</li>
+                <li>Ensure the bot replies with "Good news, no limits are applied".</li>
+                <li>If Two-Step Verification is enabled, remember or note your cloud password.</li>
+                <li>Make sure the SIM number is active to receive the login SMS/Telegram code.</li>
               </ul>
             </div>
 
             {/* STEP 2 */}
             <div className="bg-slate-50/80 rounded-2xl p-5 border border-slate-100 space-y-3">
               <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-extrabold text-sm">
-                ২
+                2
               </div>
               <h3 className="font-extrabold text-slate-900 text-sm">
-                ২. তথ্য সাবমিট করুন (Submit to Admin)
+                2. Submit to Admin
               </h3>
               <ul className="text-xs text-slate-600 space-y-2 leading-relaxed list-disc pl-4">
-                <li>ফর্মটিতে আপনার টেলিগ্রাম ফোন নম্বরটি কান্ট্রি কোড সহ লিখুন।</li>
-                <li>ইউজারনেম এবং টু-স্টেপ পাসওয়ার্ড (যদি থাকে) নির্ভুলভাবে দিন।</li>
-                <li>ওটিপি যোগাযোগের জন্য আপনার WhatsApp নম্বর বা যোগাযোগ তথ্য দিন।</li>
-                <li><strong>"Submit Telegram Account"</strong> বাটনে ক্লিক করুন।</li>
+                <li>Enter your Telegram phone number with the country code in the form.</li>
+                <li>Provide username and Two-Step Cloud Password (if enabled).</li>
+                <li>Provide your WhatsApp or mobile number for OTP contact.</li>
+                <li>Click <strong>"Submit Telegram Account"</strong> to send the details.</li>
               </ul>
             </div>
 
             {/* STEP 3 */}
             <div className="bg-slate-50/80 rounded-2xl p-5 border border-slate-100 space-y-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-extrabold text-sm">
-                ৩
+                3
               </div>
               <h3 className="font-extrabold text-slate-900 text-sm">
-                ৩. ওটিপি কনফার্মেশন ও পেমেন্ট (OTP & Payout)
+                3. OTP Confirmation & Payout
               </h3>
               <ul className="text-xs text-slate-600 space-y-2 leading-relaxed list-disc pl-4">
-                <li>এডমিন তথ্য দেখে লগইন করবেন এবং আপনার নম্বরে ওটিপি কোড যাবে।</li>
-                <li>ওটিপি দেওয়ার সাথে সাথে এডমিন একাউন্ট অ্যাপ্রুভ করবেন।</li>
-                <li>আপনার ওয়ালেটে নির্ধারিত টাকা (৳৮০ - ৳৩৫০) তাৎক্ষণিক জমা হবে।</li>
-                <li>এরপর Settings &gt; Devices এ গিয়ে আগের সেশন সমাপ্ত করে দিন।</li>
+                <li>Admin initiates the login and an OTP code is sent to your device.</li>
+                <li>Share the OTP with the admin via WhatsApp/Call to complete verification.</li>
+                <li>Once approved, your account balance is immediately credited with <strong>৳80 ($0.80)</strong>.</li>
+                <li>Open Settings &gt; Devices in Telegram and terminate other sessions.</li>
               </ul>
             </div>
           </div>

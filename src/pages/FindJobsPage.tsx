@@ -12,14 +12,11 @@ interface FindJobsPageProps {
 
 export const FindJobsPage: React.FC<FindJobsPageProps> = ({
   categories,
-  jobs = [],
   onNavigate,
-  onSelectCategory,
-  onSelectJob
+  onSelectCategory
 }) => {
   const { t } = useLanguage();
   const [searchVal, setSearchVal] = useState('');
-  const [selectedJobCategory, setSelectedJobCategory] = useState<string>('all');
 
   // Brand icons for category cards matching Home page design
   const renderCategoryIcon = (catName: string) => {
@@ -157,18 +154,15 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({
                       if (onNavigate) onNavigate('instagram-sell');
                     } else if (cat.name.includes('Telegram')) {
                       if (onNavigate) onNavigate('telegram-sell');
-                    } else {
-                      let mapped = 'all';
-                      if (cat.name.includes('YouTube')) mapped = 'YouTube';
-                      else if (cat.name.includes('কোরআন') || cat.name.toLowerCase().includes('quran')) mapped = 'Quran';
-                      else if (cat.name.includes('নামাজ') || cat.name.toLowerCase().includes('namaz')) mapped = 'Prayer';
-                      else mapped = cat.name;
-
-                      setSelectedJobCategory(mapped);
-                      if (onSelectCategory) onSelectCategory(cat);
-                      
-                      const el = document.getElementById('marketplace-jobs-section');
-                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    } else if (
+                      cat.id === 'cat-quran' ||
+                      cat.name.toLowerCase().includes('quran') ||
+                      cat.name.includes('কোরআন') ||
+                      (cat.description && cat.description.toLowerCase().includes('quran'))
+                    ) {
+                      if (onNavigate) onNavigate('quran');
+                    } else if (onSelectCategory) {
+                      onSelectCategory(cat);
                     }
                   }}
                   className="p-6 rounded-2xl bg-white hover:bg-blue-50/40 border border-slate-100 shadow-2xs hover:shadow-md transition-all cursor-pointer flex flex-col items-center text-center group"
@@ -209,200 +203,6 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({
             </div>
           )}
         </div>
-
-        {/* AVAILABLE MICRO JOBS LIST SECTION */}
-        <section id="marketplace-jobs-section" className="pt-8 border-t border-slate-200/80 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-1.5 shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Active Micro Tasks • Instant Payout</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
-                Available Micro Jobs & Tasks
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                Select a task, complete the steps, and submit proof for admin review & reward approval
-              </p>
-            </div>
-
-            {/* Category Filter Buttons */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
-              {[
-                { id: 'all', label: 'All Tasks' },
-                { id: 'Social Media', label: 'Social Media' },
-                { id: 'Telegram', label: 'Telegram' },
-                { id: 'YouTube', label: 'YouTube' },
-                { id: 'Email', label: 'Email' }
-              ].map((pill) => {
-                const isActive = selectedJobCategory === pill.id;
-                return (
-                  <button
-                    key={pill.id}
-                    onClick={() => setSelectedJobCategory(pill.id)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap cursor-pointer transition-all ${
-                      isActive
-                        ? 'bg-blue-600 text-white shadow-xs'
-                        : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200/80'
-                    }`}
-                  >
-                    {pill.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Jobs Grid */}
-          {jobs.filter((j) => {
-            const matchesCat =
-              selectedJobCategory === 'all' ||
-              j.category.toLowerCase().includes(selectedJobCategory.toLowerCase()) ||
-              j.title.toLowerCase().includes(selectedJobCategory.toLowerCase());
-            const matchesSearch =
-              !searchVal.trim() ||
-              j.title.toLowerCase().includes(searchVal.toLowerCase()) ||
-              j.description.toLowerCase().includes(searchVal.toLowerCase()) ||
-              j.category.toLowerCase().includes(searchVal.toLowerCase());
-            return matchesCat && matchesSearch;
-          }).length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {jobs
-                .filter((j) => {
-                  const matchesCat =
-                    selectedJobCategory === 'all' ||
-                    j.category.toLowerCase().includes(selectedJobCategory.toLowerCase()) ||
-                    j.title.toLowerCase().includes(selectedJobCategory.toLowerCase());
-                  const matchesSearch =
-                    !searchVal.trim() ||
-                    j.title.toLowerCase().includes(searchVal.toLowerCase()) ||
-                    j.description.toLowerCase().includes(searchVal.toLowerCase()) ||
-                    j.category.toLowerCase().includes(searchVal.toLowerCase());
-                  return matchesCat && matchesSearch;
-                })
-                .map((job) => {
-                  const rewardInBDT = (job.reward >= 5 ? job.reward : job.reward * 100).toFixed(0);
-                  return (
-                    <div
-                      key={job.id}
-                      className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group"
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-                              {job.category === 'Telegram' ? (
-                                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                                  <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.128.832.941z"/>
-                                </svg>
-                              ) : job.category === 'YouTube' ? (
-                                <svg className="w-5 h-5 fill-red-600" viewBox="0 0 24 24">
-                                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                </svg>
-                              ) : job.category === 'Email' ? (
-                                <svg className="w-5 h-5 fill-red-500" viewBox="0 0 24 24">
-                                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                                </svg>
-                              ) : (
-                                <span className="material-symbols-outlined text-[20px]">task_alt</span>
-                              )}
-                            </div>
-                            <div>
-                              <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[10px] block w-fit mb-0.5">
-                                {job.category}
-                              </span>
-                              <span className="text-[11px] text-slate-400 font-medium">
-                                {job.createdAt} • {job.daysLeft} days left
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="text-right">
-                            <span className="text-base font-extrabold text-emerald-600 font-numeric-stat block">
-                              ৳{rewardInBDT}
-                            </span>
-                            <span className="text-[10px] text-slate-400 font-medium">
-                              (${job.reward.toFixed(2)})
-                            </span>
-                          </div>
-                        </div>
-
-                        <div>
-                          <h3 className="font-bold text-slate-900 text-sm group-hover:text-blue-600 transition-colors line-clamp-1">
-                            {job.title}
-                          </h3>
-                          <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
-                            {job.description}
-                          </p>
-                        </div>
-
-                        {/* Slots remaining bar */}
-                        <div className="space-y-1 pt-1">
-                          <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
-                            <span>Quota Available</span>
-                            <span className="text-slate-700 font-bold">{job.availableSlots} / {job.totalSlots}</span>
-                          </div>
-                          <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                            <div
-                              className="bg-blue-600 h-full rounded-full transition-all"
-                              style={{ width: `${Math.max(5, (job.availableSlots / job.totalSlots) * 100)}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <img
-                            src={job.client.avatar}
-                            alt={job.client.name}
-                            className="w-6 h-6 rounded-full object-cover"
-                          />
-                          <span className="text-xs font-medium text-slate-600 truncate max-w-[110px]">
-                            {job.client.name}
-                          </span>
-                        </div>
-
-                        <button
-                          onClick={() => {
-                            const titleLower = job.title.toLowerCase();
-                            const catLower = job.category.toLowerCase();
-                            if (titleLower.includes('gmail')) {
-                              if (onNavigate) onNavigate('gmail-sell');
-                            } else if (titleLower.includes('instagram') && (titleLower.includes('sell') || catLower.includes('sell'))) {
-                              if (onNavigate) onNavigate('instagram-sell');
-                            } else if (titleLower.includes('telegram') && (titleLower.includes('sell') || titleLower.includes('sale') || catLower.includes('sell'))) {
-                              if (onNavigate) onNavigate('telegram-sell');
-                            } else if (onSelectJob) {
-                              onSelectJob(job);
-                            }
-                          }}
-                          className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
-                        >
-                          <span>Apply & Submit</span>
-                          <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          ) : (
-            <div className="bg-white rounded-2xl p-10 text-center border border-slate-100 shadow-xs space-y-3">
-              <span className="material-symbols-outlined text-slate-300 text-[36px]">assignment_late</span>
-              <h4 className="font-bold text-slate-800 text-sm">No tasks found for selected filter</h4>
-              <button
-                onClick={() => {
-                  setSelectedJobCategory('all');
-                  setSearchVal('');
-                }}
-                className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg cursor-pointer"
-              >
-                Reset Filters
-              </button>
-            </div>
-          )}
-        </section>
       </div>
     </div>
   );

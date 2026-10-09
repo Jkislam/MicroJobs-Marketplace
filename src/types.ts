@@ -11,6 +11,7 @@ export type PageType =
   | 'register' 
   | 'profile' 
   | 'edit-profile' 
+  | 'quran'
   | 'admin';
 
 export type UserRole = 'worker' | 'client' | 'admin';

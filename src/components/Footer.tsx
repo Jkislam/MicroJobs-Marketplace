@@ -40,6 +40,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <button onClick={() => onNavigate('find-jobs')} className="hover:text-white transition-colors cursor-pointer">
               {t('categories')}
             </button>
+            <button onClick={() => onNavigate('quran')} className="hover:text-emerald-400 text-emerald-300 font-bold transition-colors cursor-pointer">
+              {t('quran')}
+            </button>
             <button onClick={() => onNavigate('about')} className="hover:text-white transition-colors cursor-pointer">
               {t('about')}
             </button>
