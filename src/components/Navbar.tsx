@@ -132,22 +132,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               );
             })}
-            {/* Quick Admin Navigation Link */}
-            <button
-              onClick={() => {
-                onNavigate('admin');
-                setMobileMenuOpen(false);
-                setUserDropdownOpen(false);
-              }}
-              className={`px-3 py-1.5 ml-2 text-xs font-bold rounded-full transition-all flex items-center gap-1.5 cursor-pointer ${
-                currentPage === 'admin'
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
-              }`}
-            >
-              <span className="material-symbols-outlined text-[15px]">admin_panel_settings</span>
-              <span>{t('adminConsole')}</span>
-            </button>
           </nav>
         </div>
 
@@ -215,17 +199,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <span className="material-symbols-outlined text-[18px]">account_circle</span>
                       <span>{t('myProfile')}</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        onNavigate('admin');
-                        setUserDropdownOpen(false);
-                        setMobileMenuOpen(false);
-                      }}
-                      className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2 cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
-                      <span>{t('adminControlCenter')}</span>
                     </button>
                     <div className="border-t border-slate-100 my-1"></div>
                     <button
@@ -385,20 +358,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
             )}
-
-            <button
-              onClick={() => {
-                onNavigate('admin');
-                setMobileMenuOpen(false);
-              }}
-              className="w-full text-left px-3.5 py-3 rounded-xl text-sm font-bold text-blue-700 bg-blue-50/80 hover:bg-blue-100/80 transition-colors flex items-center justify-between cursor-pointer mt-2"
-            >
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
-                <span>{t('adminConsole')}</span>
-              </div>
-              <span className="material-symbols-outlined text-[18px] text-blue-600">chevron_right</span>
-            </button>
           </div>
         </div>
       )}

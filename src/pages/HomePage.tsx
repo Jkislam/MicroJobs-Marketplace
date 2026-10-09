@@ -303,6 +303,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                 onClick={() => {
                   if (cat.name.includes('Gmail')) {
                     onNavigate('gmail-sell');
+                  } else if (cat.name.includes('Instagram')) {
+                    onNavigate('instagram-sell');
+                  } else if (cat.name.includes('Telegram')) {
+                    onNavigate('telegram-sell');
                   } else {
                     onNavigate('find-jobs');
                   }

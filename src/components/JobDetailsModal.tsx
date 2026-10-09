@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 interface JobDetailsModalProps {
   job: Job | null;
   onClose: () => void;
-  onSubmitProof: (jobId: string, proofText: string) => void;
+  onSubmitProof: (jobId: string, proofText: string, fileUploaded?: boolean) => void;
 }
 
 export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
@@ -23,7 +23,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!proofText.trim() && !fileUploaded) return;
-    onSubmitProof(job.id, proofText);
+    onSubmitProof(job.id, proofText, fileUploaded);
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);

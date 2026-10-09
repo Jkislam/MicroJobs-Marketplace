@@ -165,6 +165,17 @@ const translations: Record<string, { en: string; bn: string }> = {
   categories: { en: 'Categories', bn: 'ক্যাটাগরি' },
   terms: { en: 'Terms', bn: 'শর্তাবলী' },
   privacy: { en: 'Privacy', bn: 'গোপনীয়তা নীতি' },
+  adminPanel: { en: 'Admin Panel', bn: 'এডমিন প্যানেল' },
+  adminLoginTitle: { en: 'Admin Portal Login', bn: 'এডমিন প্যানেল লগইন' },
+  adminLoginSub: { 
+    en: 'Enter your admin email and password to access the moderation console.', 
+    bn: 'এডমিন প্যানেলে প্রবেশ করার জন্য আপনার ইমেল এবং পাসওয়ার্ড দিন।' 
+  },
+  adminEmailLabel: { en: 'Admin Email', bn: 'এডমিন ইমেল' },
+  adminPasswordLabel: { en: 'Password', bn: 'পাসওয়ার্ড' },
+  adminLoginBtn: { en: 'Sign In to Admin Panel', bn: 'এডমিন প্যানেলে প্রবেশ করুন' },
+  backToWebsite: { en: 'Back to Website', bn: 'মূল ওয়েবসাইটে ফিরে যান' },
+  adminLogout: { en: 'Admin Logout', bn: 'এডমিন লগআউট' },
   copyright: { 
     en: '© 2026 MicroJobs Inc. All rights reserved. Built with precision and care.', 
     bn: '© ২০২৬ MicroJobs Inc. সর্বস্বত্ব সংরক্ষিত।' 

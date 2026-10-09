@@ -2,6 +2,8 @@ export type PageType =
   | 'home' 
   | 'find-jobs' 
   | 'gmail-sell'
+  | 'instagram-sell'
+  | 'telegram-sell'
   | 'post-job' 
   | 'about' 
   | 'contact' 
@@ -124,4 +126,54 @@ export interface GmailSubmission {
   submittedAt: string;
   userEmail: string;
   userName: string;
+}
+
+export interface InstagramSubmission {
+  id: string;
+  instagramUsername: string;
+  instagramPassword: string;
+  linkedEmail: string;
+  emailPassword: string;
+  followersCount: number;
+  postsCount: number;
+  has2FA: boolean;
+  backupCodesOrNote?: string;
+  reward: number;
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: string;
+  userEmail: string;
+  userName: string;
+  userAvatar?: string;
+}
+
+export interface TelegramSubmission {
+  id: string;
+  telegramPhone: string;
+  telegramUsername: string;
+  twoStepPassword?: string;
+  accountType: string;
+  channelLink?: string;
+  otpContact?: string;
+  note?: string;
+  reward: number;
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: string;
+  userEmail: string;
+  userName: string;
+  userAvatar?: string;
+}
+
+export interface JobSubmission {
+  id: string;
+  jobId: string;
+  jobTitle: string;
+  category: string;
+  proofText: string;
+  fileUploaded?: boolean;
+  reward: number;
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: string;
+  userEmail: string;
+  userName: string;
+  userAvatar?: string;
 }

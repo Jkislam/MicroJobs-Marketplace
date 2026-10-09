@@ -52,6 +52,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <button onClick={() => onNavigate('contact')} className="hover:text-white transition-colors cursor-pointer">
               {t('privacy')}
             </button>
+            <button onClick={() => onNavigate('admin')} className="hover:text-white transition-colors cursor-pointer">
+              {t('adminPanel')}
+            </button>
           </div>
 
           {/* Social Icons */}

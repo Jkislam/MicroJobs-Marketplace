@@ -1,4 +1,4 @@
-import { Job, CategoryItem, WithdrawalRequest, UserProfileData, CompletedJobActivity } from '../types';
+import { Job, CategoryItem, WithdrawalRequest, UserProfileData, CompletedJobActivity, JobSubmission, InstagramSubmission, TelegramSubmission } from '../types';
 
 export const INITIAL_JOBS: Job[] = [
   {
@@ -368,17 +368,17 @@ export const CATEGORIES_LIST: CategoryItem[] = [
     name: 'Instagram Sell',
     iconName: 'photo_camera',
     jobsCount: '',
-    rewardRange: '$0.25 - $2.00',
-    description: 'Follow profiles, like carousels, and engage with posts.',
+    rewardRange: '৳120 - ৳500',
+    description: 'Sell verified Instagram accounts safely with instant reward.',
     activeJobsNumber: 95
   },
   {
     id: 'cat-telegram',
-    name: 'Telegram Sale',
+    name: 'Telegram Sell',
     iconName: 'send',
     jobsCount: '',
-    rewardRange: '$0.20 - $1.00',
-    description: 'Join verified crypto & community channels.',
+    rewardRange: '৳80 - ৳350',
+    description: 'Sell aged Telegram accounts & active channels safely.',
     activeJobsNumber: 80
   },
   {
@@ -589,5 +589,122 @@ export const INITIAL_COMPLETED_ACTIVITIES: CompletedJobActivity[] = [
     category: 'Telegram Sale',
     earnedAmount: 0.45,
     completedAt: '12m ago'
+  }
+];
+
+export const INITIAL_JOB_SUBMISSIONS: JobSubmission[] = [
+  {
+    id: 'sub-jb-101',
+    jobId: 'JB-4905',
+    jobTitle: 'Follow Instagram Page',
+    category: 'Social Media',
+    proofText: 'Followed profile @brand_official with account @worker_alex. Attached proof.',
+    fileUploaded: true,
+    reward: 35.00,
+    status: 'pending',
+    submittedAt: '15m ago',
+    userEmail: 'sabbirislam3640@gmail.com',
+    userName: 'Sabbir Islam',
+    userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'sub-jb-102',
+    jobId: 'JB-4899',
+    jobTitle: 'Join Telegram Channel',
+    category: 'Telegram',
+    proofText: 'Joined Telegram channel @crypto_signals_daily. My username is @tanvir_bd.',
+    fileUploaded: true,
+    reward: 30.00,
+    status: 'pending',
+    submittedAt: '35m ago',
+    userEmail: 'tanvir@gmail.com',
+    userName: 'Tanvir Hossain',
+    userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'sub-jb-103',
+    jobId: 'JB-4892',
+    jobTitle: 'Watch YouTube Video',
+    category: 'YouTube',
+    proofText: 'Watched full 5 minutes, liked video, commented "Great tutorial!".',
+    fileUploaded: true,
+    reward: 45.00,
+    status: 'pending',
+    submittedAt: '1h ago',
+    userEmail: 'amina@gmail.com',
+    userName: 'Amina Begum',
+    userAvatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80'
+  }
+];
+
+export const INITIAL_INSTAGRAM_SUBMISSIONS: InstagramSubmission[] = [
+  {
+    id: 'sub-ig-101',
+    instagramUsername: 'sakib_nature_99',
+    instagramPassword: 'InstaPass#9821',
+    linkedEmail: 'sakib.nature99@gmail.com',
+    emailPassword: 'MailSecret@9821',
+    followersCount: 185,
+    postsCount: 6,
+    has2FA: false,
+    backupCodesOrNote: '2FA turned OFF. 6 real scenic photos posted. OG email included.',
+    reward: 120.00,
+    status: 'pending',
+    submittedAt: '20m ago',
+    userEmail: 'sabbirislam3640@gmail.com',
+    userName: 'Sabbir Islam',
+    userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'sub-ig-102',
+    instagramUsername: 'art_corner_bd',
+    instagramPassword: 'ArtLover$2024',
+    linkedEmail: 'artcorner.bd@gmail.com',
+    emailPassword: 'PassArt2024#',
+    followersCount: 340,
+    postsCount: 12,
+    has2FA: true,
+    backupCodesOrNote: 'Backup code: 4920 1823 9102. Logged out from phone.',
+    reward: 150.00,
+    status: 'pending',
+    submittedAt: '1h ago',
+    userEmail: 'tanvir@gmail.com',
+    userName: 'Tanvir Hossain',
+    userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
+  }
+];
+
+export const INITIAL_TELEGRAM_SUBMISSIONS: TelegramSubmission[] = [
+  {
+    id: 'sub-tg-101',
+    telegramPhone: '+8801712984512',
+    telegramUsername: '@sabbir_tg_pro',
+    twoStepPassword: 'CloudPass@2026',
+    accountType: 'Personal Aged Account (8 Months Old)',
+    channelLink: '',
+    otpContact: 'WhatsApp: +8801712984512',
+    note: '@SpamBot tested, 100% clean account without restrictions. Ready to send login code.',
+    reward: 80.00,
+    status: 'pending',
+    submittedAt: '10m ago',
+    userEmail: 'sabbirislam3640@gmail.com',
+    userName: 'Sabbir Islam',
+    userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'sub-tg-102',
+    telegramPhone: '+8801823901145',
+    telegramUsername: '@tech_daily_bd',
+    twoStepPassword: 'SecureCloud#99',
+    accountType: 'Channel / Group (950 Members)',
+    channelLink: 'https://t.me/tech_daily_bd',
+    otpContact: 'Active on Telegram call / WhatsApp',
+    note: 'Channel ownership ready for instant transfer to Admin. Clean niche subscribers.',
+    reward: 140.00,
+    status: 'pending',
+    submittedAt: '45m ago',
+    userEmail: 'amina@gmail.com',
+    userName: 'Amina Begum',
+    userAvatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80'
   }
 ];
