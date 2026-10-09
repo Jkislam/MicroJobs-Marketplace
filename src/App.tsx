@@ -20,6 +20,7 @@ import { GmailSellPage } from './pages/GmailSellPage';
 import { InstagramSellPage } from './pages/InstagramSellPage';
 import { TelegramSellPage } from './pages/TelegramSellPage';
 import { QuranReader } from './pages/QuranReader';
+import { PrayerTimesPage } from './pages/PrayerTimesPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
@@ -587,6 +588,24 @@ export default function App() {
                   return updated;
                 });
                 showToast(`মাশাআল্লাহ! পবিত্র কোরআন তিলাওয়াত থেকে +${coins} টি কয়েন সফলভাবে জমা হয়েছে!`);
+              }}
+            />
+          )}
+
+          {(currentPage === 'namaj' || currentPage === 'prayer-times') && (
+            <PrayerTimesPage
+              onNavigate={handleNavigate}
+              onAddCoins={(coins) => {
+                setUser((prev) => {
+                  const updated = {
+                    ...prev,
+                    completedTasks: prev.completedTasks + 1,
+                    totalEarnings: Number((prev.totalEarnings + (coins * 0.1)).toFixed(2))
+                  };
+                  localStorage.setItem('microjobs_user', JSON.stringify(updated));
+                  return updated;
+                });
+                showToast(`আলহামদুলিল্লাহ! দৈনিক ৫ ওয়াক্ত নামাজ সম্পন্ন করার জন্য +${coins} টি কয়েন বোনাস জমা হয়েছে!`);
               }}
             />
           )}

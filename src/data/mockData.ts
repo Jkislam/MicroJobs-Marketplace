@@ -383,7 +383,7 @@ export const CATEGORIES_LIST: CategoryItem[] = [
   },
   {
     id: 'cat-quran',
-    name: 'Reading the Holy Quran',
+    name: 'Reciting and studying the Holy Quran',
     iconName: 'menu_book',
     jobsCount: '',
     rewardRange: '10 Coins / 10 Mins',
@@ -395,8 +395,8 @@ export const CATEGORIES_LIST: CategoryItem[] = [
     name: 'Namaj Pora',
     iconName: 'self_improvement',
     jobsCount: '',
-    rewardRange: '$0.30 - $2.00',
-    description: 'Daily prayer guidelines and religious learning.',
+    rewardRange: '৫ ওয়াক্ত সময়সূচী',
+    description: 'দৈনিক ৫ ওয়াক্ত নামাজের সঠিক সময়সূচী, সেহরি ও ইফতার (AlAdhan API)।',
     activeJobsNumber: 110
   },
   {

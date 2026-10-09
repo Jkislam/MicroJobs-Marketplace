@@ -78,10 +78,10 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       );
     }
-    if (catName.includes('নামাজ') || catName.toLowerCase().includes('namaz') || catName.toLowerCase().includes('prayer')) {
+    if (catName.includes('নামাজ') || catName.toLowerCase().includes('namaz') || catName.toLowerCase().includes('namaj') || catName.toLowerCase().includes('prayer')) {
       return (
         <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shadow-xs">
-          <span className="material-symbols-outlined text-[26px]">self_improvement</span>
+          <span className="material-symbols-outlined text-[26px]">mosque</span>
         </div>
       );
     }
@@ -314,6 +314,14 @@ export const HomePage: React.FC<HomePageProps> = ({
                     (cat.description && cat.description.toLowerCase().includes('quran'))
                   ) {
                     onNavigate('quran');
+                  } else if (
+                    cat.id === 'cat-namaz' ||
+                    cat.name.toLowerCase().includes('namaj') ||
+                    cat.name.toLowerCase().includes('namaz') ||
+                    cat.name.includes('নামাজ') ||
+                    (cat.description && (cat.description.toLowerCase().includes('prayer') || cat.description.toLowerCase().includes('namaz') || cat.description.toLowerCase().includes('namaj')))
+                  ) {
+                    onNavigate('namaj');
                   } else {
                     onNavigate('find-jobs');
                   }

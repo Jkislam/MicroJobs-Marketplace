@@ -45,10 +45,10 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({
         </div>
       );
     }
-    if (catName.includes('নামাজ') || catName.toLowerCase().includes('namaz') || catName.toLowerCase().includes('prayer')) {
+    if (catName.includes('নামাজ') || catName.toLowerCase().includes('namaz') || catName.toLowerCase().includes('namaj') || catName.toLowerCase().includes('prayer')) {
       return (
         <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shadow-xs">
-          <span className="material-symbols-outlined text-[26px]">self_improvement</span>
+          <span className="material-symbols-outlined text-[26px]">mosque</span>
         </div>
       );
     }
@@ -161,6 +161,14 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({
                       (cat.description && cat.description.toLowerCase().includes('quran'))
                     ) {
                       if (onNavigate) onNavigate('quran');
+                    } else if (
+                      cat.id === 'cat-namaz' ||
+                      cat.name.toLowerCase().includes('namaj') ||
+                      cat.name.toLowerCase().includes('namaz') ||
+                      cat.name.includes('নামাজ') ||
+                      (cat.description && (cat.description.toLowerCase().includes('prayer') || cat.description.toLowerCase().includes('namaz') || cat.description.toLowerCase().includes('namaj')))
+                    ) {
+                      if (onNavigate) onNavigate('namaj');
                     } else if (onSelectCategory) {
                       onSelectCategory(cat);
                     }
@@ -178,8 +186,18 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({
                   </p>
                   <div className="mt-auto pt-3 border-t border-slate-100 w-full flex items-center justify-between text-xs">
                     <span className="font-bold text-[#1E62EC]">{cat.rewardRange}</span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[11px]">
-                      Active Tasks
+                    <span className={`px-2.5 py-0.5 rounded-full font-bold text-[11px] ${
+                      cat.id === 'cat-quran'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : cat.id === 'cat-namaz' || cat.name.toLowerCase().includes('namaj') || cat.name.toLowerCase().includes('namaz')
+                        ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                        : 'bg-blue-50 text-blue-700'
+                    }`}>
+                      {cat.id === 'cat-quran'
+                        ? 'টাইমার রিওয়ার্ড'
+                        : cat.id === 'cat-namaz' || cat.name.toLowerCase().includes('namaj') || cat.name.toLowerCase().includes('namaz')
+                        ? 'নামাজের সময়সূচী'
+                        : 'Active Tasks'}
                     </span>
                   </div>
                 </div>

@@ -20,6 +20,7 @@ interface AyahData {
   text: string;
   numberInSurah: number;
   audio?: string;
+  audioSecondary?: string[];
 }
 
 interface QuranReaderProps {
@@ -57,6 +58,38 @@ export default function QuranReader({ onNavigate, onAddCoins }: QuranReaderProps
   const [rewardNotice, setRewardNotice] = useState<string | null>(null);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const userPausedManually = useRef<boolean>(false);
+  const elapsedRef = useRef<number>(elapsedSeconds);
+
+  // Keep elapsedRef up-to-date with current elapsedSeconds
+  useEffect(() => {
+    elapsedRef.current = elapsedSeconds;
+  }, [elapsedSeconds]);
+
+  // Ensure timer automatically freezes when leaving tab/window and unfreezes on return;
+  // Also ensure elapsed seconds is saved to localStorage when unmounting (leaving page)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Tab is hidden / user left the tab -> freeze timer
+        setIsTimerRunning(false);
+      } else {
+        // Tab is visible again -> resume only if not manually paused by user
+        if (!userPausedManually.current) {
+          setIsTimerRunning(true);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      // When leaving this page, freeze and persist exact elapsed time
+      if (timerRef.current) clearInterval(timerRef.current);
+      localStorage.setItem("microjobs_quran_timer_elapsed", String(elapsedRef.current));
+    };
+  }, []);
 
   // Soft Islamic pleasant chime sound using Web Audio API
   const playRewardChime = () => {
@@ -83,7 +116,7 @@ export default function QuranReader({ onNavigate, onAddCoins }: QuranReaderProps
     }
   };
 
-  // Timer interval effect: runs every second
+  // Timer interval effect: runs every second while isTimerRunning is true
   useEffect(() => {
     if (!isTimerRunning) {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -98,6 +131,8 @@ export default function QuranReader({ onNavigate, onAddCoins }: QuranReaderProps
         }
 
         const next = prev + 1;
+        elapsedRef.current = next;
+
         if (next >= REWARD_INTERVAL_SECONDS) {
           // Exactly reached 10 minutes (600s)! Unlocks the Claim button!
           localStorage.setItem("microjobs_quran_timer_elapsed", String(REWARD_INTERVAL_SECONDS));
@@ -267,11 +302,11 @@ export default function QuranReader({ onNavigate, onAddCoins }: QuranReaderProps
               className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-emerald-700 transition-colors cursor-pointer"
             >
               <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-              <span>ক্যাটাগরি তালিকায় ফিরে যান (Back to Marketplace)</span>
+              <span>Find Jobs পেজে ফিরে যান (টাইমার ফ্রিজ থাকবে)</span>
             </button>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold">
               <span className="material-symbols-outlined text-[16px]">menu_book</span>
-              <span>পবিত্র আল কোরআনুল কারীম</span>
+              <span>Reciting and studying the Holy Quran</span>
             </div>
           </div>
         </div>
@@ -309,7 +344,7 @@ export default function QuranReader({ onNavigate, onAddCoins }: QuranReaderProps
                     </span>
                   </h3>
                   <p className="text-[11px] text-slate-500 font-medium">
-                    মনোযোগ দিয়ে কোরআন তিলাওয়াত ও স্টাডি করুন। প্রতি ১০ মিনিটে আপনার একাউন্টে ১০টি কয়েন জমা হবে।
+                    এই পেজে প্রবেশ করলে টাইমার স্বয়ংক্রিয়ভাবে চালু হবে। পেজ থেকে বের হলে কাউন্ট বন্ধ (ফ্রিজ) থাকবে। প্রতি ১০ মিনিটে ১০টি কয়েন ক্লেইম করা যাবে।
                   </p>
                 </div>
               </div>
@@ -322,7 +357,7 @@ export default function QuranReader({ onNavigate, onAddCoins }: QuranReaderProps
                     : "bg-amber-50 text-amber-800 border-amber-200"
                 }`}>
                   <span className={`w-2 h-2 rounded-full ${isTimerRunning ? "bg-emerald-500 animate-pulse" : "bg-amber-500"}`} />
-                  <span>{isTimerRunning ? "টাইমার সচল" : "বিরতিতে আছে"}</span>
+                  <span>{isTimerRunning ? "টাইমার সচল (কাউন্ট হচ্ছে)" : "টাইমার ফ্রিজ (স্থগিত)"}</span>
                 </div>
               </div>
             </div>
@@ -397,7 +432,11 @@ export default function QuranReader({ onNavigate, onAddCoins }: QuranReaderProps
             <div className="quran-timer-actions">
               <button
                 type="button"
-                onClick={() => setIsTimerRunning(!isTimerRunning)}
+                onClick={() => {
+                  const nextState = !isTimerRunning;
+                  userPausedManually.current = !nextState;
+                  setIsTimerRunning(nextState);
+                }}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all ${
                   isTimerRunning
                     ? "bg-slate-100 hover:bg-slate-200 text-slate-700"
@@ -414,6 +453,7 @@ export default function QuranReader({ onNavigate, onAddCoins }: QuranReaderProps
                 type="button"
                 onClick={() => {
                   setElapsedSeconds(0);
+                  elapsedRef.current = 0;
                   localStorage.setItem("microjobs_quran_timer_elapsed", "0");
                 }}
                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
@@ -622,6 +662,9 @@ export default function QuranReader({ onNavigate, onAddCoins }: QuranReaderProps
                     <div className="quran-audio-player">
                       <audio controls preload="none">
                         <source src={audio.audio} type="audio/mpeg" />
+                        {audio.audioSecondary && audio.audioSecondary.length > 0 && (
+                          <source src={audio.audioSecondary[0]} type="audio/mpeg" />
+                        )}
                         আপনার ব্রাউজারে অডিও প্লেয়ারটি সাপোর্ট করছে না।
                       </audio>
                     </div>
