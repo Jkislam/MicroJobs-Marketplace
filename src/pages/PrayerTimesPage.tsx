@@ -3,7 +3,7 @@ import { PageType } from '../types';
 
 interface PrayerTimesPageProps {
   onNavigate: (page: PageType) => void;
-  onAddCoins?: (coins: number) => void;
+  onAddCoins?: (coins: number, reason?: string) => void;
 }
 
 interface AlAdhanTimings {
@@ -201,6 +201,27 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
       return localStorage.getItem(`namaj_streak_claimed_${todayKey}`) === 'true';
     } catch {
       return false;
+    }
+  });
+
+  // User Coins State (synced with microjobs_coins and microjobs_quran_coins)
+  const [coins, setCoins] = useState<number>(() => {
+    try {
+      const savedCoins = localStorage.getItem('microjobs_coins') || localStorage.getItem('microjobs_quran_coins');
+      const num = savedCoins ? parseInt(savedCoins, 10) : 0;
+      return isNaN(num) || num < 0 ? 0 : num;
+    } catch {
+      return 0;
+    }
+  });
+
+  // Track which prayers have already awarded per-prayer coins today
+  const [awardedPrayers, setAwardedPrayers] = useState<{ [key: string]: boolean }>(() => {
+    try {
+      const saved = localStorage.getItem(`namaj_awarded_${todayKey}`);
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
     }
   });
 
@@ -458,15 +479,61 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
 
   // Prayer Tracker Checkbox toggle
   const togglePrayerTracking = (prayerKey: string) => {
+    const isCurrentlyChecked = !!trackedPrayers[prayerKey];
+    const willBeChecked = !isCurrentlyChecked;
+
     const updated = {
       ...trackedPrayers,
-      [prayerKey]: !trackedPrayers[prayerKey]
+      [prayerKey]: willBeChecked
     };
     setTrackedPrayers(updated);
     try {
       localStorage.setItem(`namaj_tracker_${todayKey}`, JSON.stringify(updated));
     } catch (e) {
       console.warn('Could not save tracking to localStorage:', e);
+    }
+
+    // When marking a prayer as completed for the first time today, award +2 coins
+    if (willBeChecked && !awardedPrayers[prayerKey]) {
+      const prayerNameMap: { [key: string]: string } = {
+        fajr: 'ফজর',
+        dhuhr: 'যোহর',
+        asr: 'আসর',
+        maghrib: 'মাগরিব',
+        isha: 'ইশা',
+        tahajjud: 'তাহাজ্জুদ'
+      };
+      const pName = prayerNameMap[prayerKey] || 'নামাজ';
+      const COINS_PER_PRAYER = 2;
+
+      setCoins((prevCoins) => {
+        const nextCoins = prevCoins + COINS_PER_PRAYER;
+        try {
+          localStorage.setItem('microjobs_coins', String(nextCoins));
+          localStorage.setItem('microjobs_quran_coins', String(nextCoins));
+        } catch (e) {
+          console.warn('Could not save coins:', e);
+        }
+        return nextCoins;
+      });
+
+      const updatedAwarded = {
+        ...awardedPrayers,
+        [prayerKey]: true
+      };
+      setAwardedPrayers(updatedAwarded);
+      try {
+        localStorage.setItem(`namaj_awarded_${todayKey}`, JSON.stringify(updatedAwarded));
+      } catch (e) {
+        console.warn('Could not save awarded prayers:', e);
+      }
+
+      if (onAddCoins) {
+        onAddCoins(COINS_PER_PRAYER, `আলহামদুলিল্লাহ! ${pName} নামাজ আদায় করার জন্য +${COINS_PER_PRAYER} টি কয়েন উপরে যুক্ত হয়েছে!`);
+      }
+
+      setClaimToast(`আলহামদুলিল্লাহ! ${pName} নামাজ আদায় করায় +${toBengaliDigits(COINS_PER_PRAYER)} টি কয়েন উপরে যুক্ত হয়েছে! 🪙`);
+      setTimeout(() => setClaimToast(null), 3500);
     }
   };
 
@@ -483,12 +550,24 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
       return;
     }
 
+    const STREAK_BONUS = 10;
+    setCoins((prevCoins) => {
+      const nextCoins = prevCoins + STREAK_BONUS;
+      try {
+        localStorage.setItem('microjobs_coins', String(nextCoins));
+        localStorage.setItem('microjobs_quran_coins', String(nextCoins));
+      } catch (e) {
+        console.warn('Could not save coins:', e);
+      }
+      return nextCoins;
+    });
+
     if (onAddCoins) {
-      onAddCoins(10);
+      onAddCoins(STREAK_BONUS, `মাশাআল্লাহ! ৫ ওয়াক্ত নামাজ সম্পন্ন করায় দৈনিক বোনাস +${STREAK_BONUS} টি কয়েন উপরে যুক্ত হয়েছে!`);
     }
     setHasClaimedDailyStreak(true);
     localStorage.setItem(`namaj_streak_claimed_${todayKey}`, 'true');
-    setClaimToast('আলহামদুলিল্লাহ! ৫ ওয়াক্ত নামাজ সম্পন্ন করায় +১০ কয়েন রিওয়ার্ড যোগ হয়েছে!');
+    setClaimToast(`মাশাআল্লাহ! ৫ ওয়াক্ত নামাজ সম্পন্ন করায় দৈনিক বোনাস +১০ কয়েন উপরে যুক্ত হয়েছে! 🪙`);
     setTimeout(() => setClaimToast(null), 4000);
   };
 
@@ -616,11 +695,24 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
               <span>Find Jobs-এ ফিরে যান</span>
             </button>
 
-            {/* Right status or refresh */}
-            <div className="flex items-center gap-2">
+            {/* Right: Coins balance & status */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Coin Balance Badge at Top */}
+              <div
+                title="নামাজ ট্র্যাকার ও আমল থেকে মোট অর্জিত কয়েন"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 border border-amber-400/40 text-amber-300 shadow-sm transition-all backdrop-blur-md cursor-default"
+              >
+                <span className="text-base sm:text-lg animate-bounce select-none">🪙</span>
+                <span className="text-white font-black text-xs sm:text-sm tracking-wide">
+                  {toBengaliDigits(coins)}
+                </span>
+                <span className="text-amber-300 font-bold text-[11px] sm:text-xs">কয়েন</span>
+              </div>
+
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
                 <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span>দৈনিক ওয়াক্ত আপডেট</span>
+                <span className="hidden sm:inline">দৈনিক ওয়াক্ত আপডেট</span>
+                <span className="sm:hidden">ওয়াক্ত আপডেট</span>
               </span>
             </div>
           </div>
@@ -1188,16 +1280,29 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
                   আজকের নামাজ ট্র্যাকার ও রেকর্ড
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500">
-                  প্রতি ওয়াক্ত নামাজ আদায়ের পর টিক চিহ্ন দিন। ৫ ওয়াক্ত পূর্ণ হলে দৈনিক বোনাস গ্রহণ করুন।
+                  প্রতি ওয়াক্ত নামাজ আদায়ের পর টিক চিহ্ন দিন। প্রতি ওয়াক্তে ২ কয়েন এবং ৫ ওয়াক্ত পূর্ণ হলে দৈনিক বোনাস গ্রহণ করুন।
                 </p>
               </div>
 
-              {/* Progress Summary Card */}
-              <div className="bg-emerald-50 rounded-2xl p-4 border border-emerald-100 text-center sm:text-right shrink-0">
-                <span className="text-xs font-bold text-emerald-800 block">আদায় সম্পন্ন</span>
-                <span className="text-2xl font-black text-emerald-700">
-                  {toBengaliDigits(completedCount)} / {toBengaliDigits(5)} ওয়াক্ত
-                </span>
+              {/* Progress & Coin Summary Cards */}
+              <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+                {/* Total Coins Card */}
+                <div className="bg-amber-50 rounded-2xl p-3 sm:p-4 border border-amber-200 text-center sm:text-right shrink-0">
+                  <span className="text-[11px] font-bold text-amber-800 block">মোট অর্জিত কয়েন</span>
+                  <div className="text-lg sm:text-2xl font-black text-amber-950 flex items-center justify-center sm:justify-end gap-1 font-numeric-stat">
+                    <span className="text-xl">🪙</span>
+                    <span>{toBengaliDigits(coins)}</span>
+                    <span className="text-xs font-bold text-amber-700">কয়েন</span>
+                  </div>
+                </div>
+
+                {/* Completed Count Card */}
+                <div className="bg-emerald-50 rounded-2xl p-3 sm:p-4 border border-emerald-100 text-center sm:text-right shrink-0">
+                  <span className="text-xs font-bold text-emerald-800 block">আদায় সম্পন্ন</span>
+                  <span className="text-lg sm:text-2xl font-black text-emerald-700">
+                    {toBengaliDigits(completedCount)} / {toBengaliDigits(5)} ওয়াক্ত
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -1236,11 +1341,16 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
                       </div>
                       <div>
                         <h4
-                          className={`font-black text-base ${
+                          className={`font-black text-base flex items-center gap-1.5 ${
                             isChecked ? 'text-emerald-950 line-through opacity-80' : 'text-slate-900'
                           }`}
                         >
-                          {item.nameBn}
+                          <span>{item.nameBn}</span>
+                          {awardedPrayers[item.key] && (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 no-underline inline-flex items-center gap-0.5">
+                              🪙 +২
+                            </span>
+                          )}
                         </h4>
                         <p className="text-[11px] text-slate-500">{item.sub}</p>
                       </div>

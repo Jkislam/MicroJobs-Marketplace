@@ -595,7 +595,7 @@ export default function App() {
           {(currentPage === 'namaj' || currentPage === 'prayer-times') && (
             <PrayerTimesPage
               onNavigate={handleNavigate}
-              onAddCoins={(coins) => {
+              onAddCoins={(coins, reason) => {
                 setUser((prev) => {
                   const updated = {
                     ...prev,
@@ -605,7 +605,13 @@ export default function App() {
                   localStorage.setItem('microjobs_user', JSON.stringify(updated));
                   return updated;
                 });
-                showToast(`আলহামদুলিল্লাহ! দৈনিক ৫ ওয়াক্ত নামাজ সম্পন্ন করার জন্য +${coins} টি কয়েন বোনাস জমা হয়েছে!`);
+                if (reason) {
+                  showToast(reason);
+                } else if (coins >= 10) {
+                  showToast(`আলহামদুলিল্লাহ! দৈনিক ৫ ওয়াক্ত নামাজ সম্পন্ন করার জন্য +${coins} টি কয়েন বোনাস জমা হয়েছে!`);
+                } else {
+                  showToast(`আলহামদুলিল্লাহ! নামাজ ট্র্যাকার থেকে +${coins} টি কয়েন উপরে যুক্ত হয়েছে!`);
+                }
               }}
             />
           )}
