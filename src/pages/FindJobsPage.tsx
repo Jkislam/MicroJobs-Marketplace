@@ -181,6 +181,11 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({
                       cat.name.includes('নামাজ')
                     ) {
                       if (onNavigate) onNavigate('namaj');
+                    } else if (
+                      cat.id === 'cat-leader-shift' ||
+                      cat.name.toLowerCase().includes('leader')
+                    ) {
+                      if (onNavigate) onNavigate('leader-shift');
                     } else if (onSelectCategory) {
                       onSelectCategory(cat);
                     }
@@ -207,6 +212,8 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({
                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                         : cat.id === 'cat-namaz' || cat.name.toLowerCase().includes('namaj') || cat.name.toLowerCase().includes('namaz')
                         ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                        : cat.id === 'cat-leader-shift' || cat.name.toLowerCase().includes('leader')
+                        ? 'bg-purple-50 text-purple-700 border border-purple-200'
                         : 'bg-blue-50 text-blue-700'
                     }`}>
                       {cat.id === 'cat-target-bonus' || cat.name.toLowerCase().includes('target')
@@ -217,6 +224,8 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({
                         ? 'Mobile Top-up'
                         : cat.id === 'cat-namaz' || cat.name.toLowerCase().includes('namaj') || cat.name.toLowerCase().includes('namaz')
                         ? 'নামাজের সময়সূচী'
+                        : cat.id === 'cat-leader-shift' || cat.name.toLowerCase().includes('leader')
+                        ? 'Monthly Allowance'
                         : 'Active Tasks'}
                     </span>
                   </div>

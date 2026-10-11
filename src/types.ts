@@ -16,6 +16,7 @@ export type PageType =
   | 'quran'
   | 'namaj'
   | 'prayer-times'
+  | 'leader-shift'
   | 'admin';
 
 export type UserRole = 'worker' | 'client' | 'admin';

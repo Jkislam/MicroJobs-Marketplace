@@ -23,6 +23,7 @@ import { QuranReader } from './pages/QuranReader';
 import { PrayerTimesPage } from './pages/PrayerTimesPage';
 import { MobileRechargePage } from './pages/MobileRechargePage';
 import { TargetBonusPage } from './pages/TargetBonusPage';
+import { LeaderShiftPage } from './pages/LeaderShiftPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
@@ -692,6 +693,16 @@ export default function App() {
                 });
                 showToast(`Congratulations! $${bonusUsd.toFixed(2)} bonus from "${bonusTitle}" added to your balance!`);
               }}
+            />
+          )}
+
+          {currentPage === 'leader-shift' && (
+            <LeaderShiftPage
+              onNavigate={handleNavigate}
+              user={user}
+              gmailSubmissionsCount={gmailSubmissions.length}
+              instagramSubmissionsCount={instagramSubmissions.length}
+              telegramSubmissionsCount={telegramSubmissions.length}
             />
           )}
 
