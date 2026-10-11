@@ -392,7 +392,7 @@ export default function QuranReader({ onNavigate, onAddCoins }: QuranReaderProps
                   <div>
                     <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider">মোট অর্জিত কয়েন</div>
                     <div className="text-2xl font-black text-amber-950 flex items-center gap-1.5 font-numeric-stat">
-                      <span className="text-2xl animate-bounce">🪙</span>
+                      <span className="material-symbols-outlined text-amber-600 text-2xl">toll</span>
                       <span>{toBanglaNumber(coins)}</span>
                       <span className="text-xs font-bold text-amber-700">কয়েন</span>
                     </div>
@@ -702,8 +702,8 @@ export default function QuranReader({ onNavigate, onAddCoins }: QuranReaderProps
 
             {/* Glowing Coin Box */}
             <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-50 to-emerald-50 border border-amber-200/80 mb-6 flex items-center justify-center gap-3 shadow-xs">
-              <div className="w-12 h-12 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center text-2xl shadow-md animate-bounce">
-                🪙
+              <div className="w-12 h-12 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center text-2xl shadow-md">
+                <span className="material-symbols-outlined text-[28px]">toll</span>
               </div>
               <div className="text-left">
                 <div className="text-xl font-black text-amber-950">

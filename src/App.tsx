@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageType, Job, WithdrawalRequest, UserProfileData, CompletedJobActivity, GmailSubmission, JobSubmission, InstagramSubmission, TelegramSubmission } from './types';
+import { PageType, Job, WithdrawalRequest, UserProfileData, CompletedJobActivity, GmailSubmission, JobSubmission, InstagramSubmission, TelegramSubmission, MobileRechargeRequest } from './types';
 import { INITIAL_JOBS, CATEGORIES_LIST, INITIAL_WITHDRAWALS, MOCK_USER, INITIAL_COMPLETED_ACTIVITIES, INITIAL_JOB_SUBMISSIONS, INITIAL_INSTAGRAM_SUBMISSIONS, INITIAL_TELEGRAM_SUBMISSIONS } from './data/mockData';
 import { LanguageProvider } from './context/LanguageContext';
 import { Navbar } from './components/Navbar';
@@ -21,6 +21,8 @@ import { InstagramSellPage } from './pages/InstagramSellPage';
 import { TelegramSellPage } from './pages/TelegramSellPage';
 import { QuranReader } from './pages/QuranReader';
 import { PrayerTimesPage } from './pages/PrayerTimesPage';
+import { MobileRechargePage } from './pages/MobileRechargePage';
+import { TargetBonusPage } from './pages/TargetBonusPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
@@ -87,6 +89,18 @@ export default function App() {
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const refParam = params.get('ref');
+      if (refParam) {
+        localStorage.setItem('microjobs_pending_ref', refParam);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => {
@@ -112,8 +126,24 @@ export default function App() {
     username: string;
     email: string;
     role: 'worker' | 'client';
+    referralCode?: string;
   }) => {
     const formattedUsername = details.username ? (details.username.startsWith('@') ? details.username : `@${details.username}`) : user.username;
+    
+    const refCode = details.referralCode || localStorage.getItem('microjobs_pending_ref');
+    if (refCode) {
+      const cleanRef = refCode.replace('@', '').toLowerCase();
+      try {
+        const countsMapStr = localStorage.getItem('microjobs_referral_counts_map');
+        const countsMap = countsMapStr ? JSON.parse(countsMapStr) : {};
+        countsMap[cleanRef] = (countsMap[cleanRef] || 0) + 1;
+        localStorage.setItem('microjobs_referral_counts_map', JSON.stringify(countsMap));
+        localStorage.removeItem('microjobs_pending_ref');
+      } catch {
+        // ignore
+      }
+    }
+
     const updatedUser: UserProfileData = {
       avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
       fullName: details.fullName,
@@ -612,6 +642,55 @@ export default function App() {
                 } else {
                   showToast(`আলহামদুলিল্লাহ! নামাজ ট্র্যাকার থেকে +${coins} টি কয়েন উপরে যুক্ত হয়েছে!`);
                 }
+              }}
+            />
+          )}
+
+          {currentPage === 'mobile-recharge' && (
+            <MobileRechargePage
+              onNavigate={handleNavigate}
+              currentUser={user}
+              onRechargeSuccess={(req: MobileRechargeRequest) => {
+                if (req.paymentSource === 'balance') {
+                  const bdtRate = 110;
+                  const usdCost = req.amount / bdtRate;
+                  setUser((prev) => {
+                    const updated = {
+                      ...prev,
+                      totalEarnings: Math.max(0, prev.totalEarnings - usdCost)
+                    };
+                    try {
+                      localStorage.setItem('microjobs_user', JSON.stringify(updated));
+                    } catch {
+                      // ignore
+                    }
+                    return updated;
+                  });
+                }
+                showToast(`Mobile recharge request submitted! ৳${req.amount} will be processed shortly.`);
+              }}
+            />
+          )}
+
+          {currentPage === 'target-bonus' && (
+            <TargetBonusPage
+              onNavigate={handleNavigate}
+              currentUser={user}
+              onClaimBonus={(bonusId, bonusUsd, bonusTitle) => {
+                setUser((prev) => {
+                  const updated = {
+                    ...prev,
+                    completedTasks: prev.completedTasks + 1,
+                    totalEarnings: Number((prev.totalEarnings + bonusUsd).toFixed(2))
+                  };
+                  try {
+                    localStorage.setItem('microjobs_user', JSON.stringify(updated));
+                  } catch {
+                    // ignore
+                  }
+                  return updated;
+                });
+                showToast(`Congratulations! $${bonusUsd.toFixed(2)} bonus from "${bonusTitle}" added to your balance!`);
               }}
             />
           )}

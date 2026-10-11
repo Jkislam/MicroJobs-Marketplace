@@ -4,6 +4,8 @@ export type PageType =
   | 'gmail-sell'
   | 'instagram-sell'
   | 'telegram-sell'
+  | 'mobile-recharge'
+  | 'target-bonus'
   | 'post-job' 
   | 'about' 
   | 'contact' 
@@ -179,4 +181,19 @@ export interface JobSubmission {
   userEmail: string;
   userName: string;
   userAvatar?: string;
+}
+
+export interface MobileRechargeRequest {
+  id: string;
+  phoneNumber: string;
+  operator: 'Grameenphone' | 'Banglalink' | 'Robi' | 'Airtel';
+  simType?: string;
+  amount: number;
+  paymentSource: 'balance' | 'coins';
+  coinsUsed?: number;
+  status: 'pending' | 'completed' | 'failed';
+  requestedAt: string;
+  userEmail: string;
+  userName: string;
+  note?: string;
 }

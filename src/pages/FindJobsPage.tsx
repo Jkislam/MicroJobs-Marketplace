@@ -12,8 +12,10 @@ interface FindJobsPageProps {
 
 export const FindJobsPage: React.FC<FindJobsPageProps> = ({
   categories,
+  jobs = [],
   onNavigate,
-  onSelectCategory
+  onSelectCategory,
+  onSelectJob
 }) => {
   const { t } = useLanguage();
   const [searchVal, setSearchVal] = useState('');
@@ -155,18 +157,28 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({
                     } else if (cat.name.includes('Telegram')) {
                       if (onNavigate) onNavigate('telegram-sell');
                     } else if (
+                      cat.id === 'cat-target-bonus' ||
+                      cat.name.toLowerCase().includes('target') ||
+                      cat.name.includes('টার্গেট')
+                    ) {
+                      if (onNavigate) onNavigate('target-bonus');
+                    } else if (
+                      cat.id === 'cat-mobile-recharge' ||
+                      cat.name.toLowerCase().includes('recharge') ||
+                      cat.name.includes('রিচার্জ')
+                    ) {
+                      if (onNavigate) onNavigate('mobile-recharge');
+                    } else if (
                       cat.id === 'cat-quran' ||
                       cat.name.toLowerCase().includes('quran') ||
-                      cat.name.includes('কোরআন') ||
-                      (cat.description && cat.description.toLowerCase().includes('quran'))
+                      cat.name.includes('কোরআন')
                     ) {
                       if (onNavigate) onNavigate('quran');
                     } else if (
                       cat.id === 'cat-namaz' ||
                       cat.name.toLowerCase().includes('namaj') ||
                       cat.name.toLowerCase().includes('namaz') ||
-                      cat.name.includes('নামাজ') ||
-                      (cat.description && (cat.description.toLowerCase().includes('prayer') || cat.description.toLowerCase().includes('namaz') || cat.description.toLowerCase().includes('namaj')))
+                      cat.name.includes('নামাজ')
                     ) {
                       if (onNavigate) onNavigate('namaj');
                     } else if (onSelectCategory) {
@@ -187,14 +199,22 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({
                   <div className="mt-auto pt-3 border-t border-slate-100 w-full flex items-center justify-between text-xs">
                     <span className="font-bold text-[#1E62EC]">{cat.rewardRange}</span>
                     <span className={`px-2.5 py-0.5 rounded-full font-bold text-[11px] ${
-                      cat.id === 'cat-quran'
+                      cat.id === 'cat-target-bonus' || cat.name.toLowerCase().includes('target')
+                        ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                        : cat.id === 'cat-quran'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : cat.id === 'cat-mobile-recharge' || cat.name.toLowerCase().includes('recharge') || cat.name.includes('রিচার্জ')
                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                         : cat.id === 'cat-namaz' || cat.name.toLowerCase().includes('namaj') || cat.name.toLowerCase().includes('namaz')
                         ? 'bg-amber-50 text-amber-700 border border-amber-200'
                         : 'bg-blue-50 text-blue-700'
                     }`}>
-                      {cat.id === 'cat-quran'
+                      {cat.id === 'cat-target-bonus' || cat.name.toLowerCase().includes('target')
+                        ? 'Special Bonus'
+                        : cat.id === 'cat-quran'
                         ? 'টাইমার রিওয়ার্ড'
+                        : cat.id === 'cat-mobile-recharge' || cat.name.toLowerCase().includes('recharge') || cat.name.includes('রিচার্জ')
+                        ? 'Mobile Top-up'
                         : cat.id === 'cat-namaz' || cat.name.toLowerCase().includes('namaj') || cat.name.toLowerCase().includes('namaz')
                         ? 'নামাজের সময়সূচী'
                         : 'Active Tasks'}
@@ -221,6 +241,151 @@ export const FindJobsPage: React.FC<FindJobsPageProps> = ({
             </div>
           )}
         </div>
+
+        {/* TARGET BONUS HIGHLIGHT SECTION */}
+        <section className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-rose-500/10 border border-amber-200/60 rounded-3xl p-5 sm:p-8 space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold shadow-2xs">
+                <span className="material-symbols-outlined text-[16px] text-amber-600">stars</span>
+                <span>Special Milestone Goals • Target Bonus</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                Referrals, Mobile Recharges & 1 Month Prayer Streak
+              </h2>
+              <p className="text-xs text-slate-600 max-w-2xl">
+                Achieve specific milestones alongside your daily micro-jobs to unlock guaranteed extra cash bonuses.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                if (onNavigate) onNavigate('target-bonus');
+              }}
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xs shadow-sm transition-all cursor-pointer self-start sm:self-center shrink-0"
+            >
+              <span>View All Target Bonuses</span>
+              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </button>
+          </div>
+
+          {/* 3 Featured Target Bonus Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+            {/* 1. Referral Bonus */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-2xs">
+                    <span className="material-symbols-outlined text-[22px]">group_add</span>
+                  </div>
+                  <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">
+                    $2.50 / ৳250
+                  </span>
+                </div>
+                <h3 className="font-extrabold text-slate-900 text-sm mb-1">
+                  10 Referrals Milestone Bonus
+                </h3>
+                <p className="text-xs text-slate-500 leading-relaxed mb-3">
+                  Invite 10 active friends using your personal referral link and claim an instant $2.50 cash reward.
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400">Target: 10 Friends</span>
+                <button
+                  onClick={() => {
+                    const task = jobs.find(j => j.id === 'TB-101');
+                    if (task && onSelectJob) {
+                      onSelectJob(task);
+                    } else if (onNavigate) {
+                      onNavigate('target-bonus');
+                    }
+                  }}
+                  className="text-xs font-bold text-indigo-600 hover:text-indigo-700 cursor-pointer flex items-center gap-1"
+                >
+                  <span>View Details</span>
+                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Mobile Recharge Bonus */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-2xs">
+                    <span className="material-symbols-outlined text-[22px]">phonelink_ring</span>
+                  </div>
+                  <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">
+                    $1.50 / ৳150
+                  </span>
+                </div>
+                <h3 className="font-extrabold text-slate-900 text-sm mb-1">
+                  5 Mobile Recharges Milestone
+                </h3>
+                <p className="text-xs text-slate-500 leading-relaxed mb-3">
+                  Complete 5 mobile recharge top-ups on any operator and earn a cashback milestone bonus.
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400">Target: 5 Recharges</span>
+                <button
+                  onClick={() => {
+                    const task = jobs.find(j => j.id === 'TB-102');
+                    if (task && onSelectJob) {
+                      onSelectJob(task);
+                    } else if (onNavigate) {
+                      onNavigate('target-bonus');
+                    }
+                  }}
+                  className="text-xs font-bold text-emerald-600 hover:text-emerald-700 cursor-pointer flex items-center gap-1"
+                >
+                  <span>View Details</span>
+                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 3. 1 Month Prayer Bonus */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shadow-2xs">
+                    <span className="material-symbols-outlined text-[22px]">mosque</span>
+                  </div>
+                  <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">
+                    $4.50 / ৳450
+                  </span>
+                </div>
+                <h3 className="font-extrabold text-slate-900 text-sm mb-1">
+                  1 Month Prayer Streak Bonus
+                </h3>
+                <p className="text-xs text-slate-500 leading-relaxed mb-3">
+                  Track 5 daily prayers consistently for 30 days in Namaj Pora to unlock a $4.50 bonus and +500 coins.
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400">Target: 30-Day Streak</span>
+                <button
+                  onClick={() => {
+                    const task = jobs.find(j => j.id === 'TB-103');
+                    if (task && onSelectJob) {
+                      onSelectJob(task);
+                    } else if (onNavigate) {
+                      onNavigate('target-bonus');
+                    }
+                  }}
+                  className="text-xs font-bold text-amber-600 hover:text-amber-700 cursor-pointer flex items-center gap-1"
+                >
+                  <span>View Details</span>
+                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

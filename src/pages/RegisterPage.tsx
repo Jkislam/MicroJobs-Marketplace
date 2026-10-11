@@ -8,6 +8,7 @@ interface RegisterPageProps {
     username: string;
     email: string;
     role: 'worker' | 'client';
+    referralCode?: string;
   }) => void;
 }
 
@@ -16,6 +17,14 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegist
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [referralCodeInput, setReferralCodeInput] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('ref') || localStorage.getItem('microjobs_pending_ref') || '';
+    } catch {
+      return '';
+    }
+  });
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -31,7 +40,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegist
       fullName,
       username,
       email,
-      role
+      role,
+      referralCode: referralCodeInput.trim() || undefined
     });
     onNavigate('profile');
   };
@@ -90,6 +100,21 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegist
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="alex@example.com"
+                  className="w-full h-11 px-3.5 rounded-xl bg-slate-50 text-slate-900 text-xs border border-slate-200 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+
+              {/* Optional Referral Code */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-slate-800">Referral Code (Optional)</label>
+                  <span className="text-[10px] text-slate-400 font-medium">Optional</span>
+                </div>
+                <input
+                  type="text"
+                  value={referralCodeInput}
+                  onChange={(e) => setReferralCodeInput(e.target.value)}
+                  placeholder="e.g. friend's username"
                   className="w-full h-11 px-3.5 rounded-xl bg-slate-50 text-slate-900 text-xs border border-slate-200 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>

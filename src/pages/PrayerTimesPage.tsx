@@ -493,21 +493,26 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
       console.warn('Could not save tracking to localStorage:', e);
     }
 
-    // When marking a prayer as completed for the first time today, award +2 coins
-    if (willBeChecked && !awardedPrayers[prayerKey]) {
-      const prayerNameMap: { [key: string]: string } = {
-        fajr: 'ফজর',
-        dhuhr: 'যোহর',
-        asr: 'আসর',
-        maghrib: 'মাগরিব',
-        isha: 'ইশা',
-        tahajjud: 'তাহাজ্জুদ'
-      };
-      const pName = prayerNameMap[prayerKey] || 'নামাজ';
-      const COINS_PER_PRAYER = 2;
+    const prayerNameMap: { [key: string]: string } = {
+      fajr: 'ফজর',
+      dhuhr: 'যোহর',
+      asr: 'আসর',
+      maghrib: 'মাগরিব',
+      isha: 'ইশা',
+      tahajjud: 'তাহাজ্জুদ'
+    };
+    const pName = prayerNameMap[prayerKey] || 'নামাজ';
 
+    // Calculate completed mandatory prayers count
+    const completedCountAfter = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'].filter(
+      (k) => updated[k]
+    ).length;
+
+    // When 5 mandatory prayers are completed and 10 coins reward not claimed yet
+    if (willBeChecked && completedCountAfter === 5 && !hasClaimedDailyStreak) {
+      const TOTAL_BONUS = 10;
       setCoins((prevCoins) => {
-        const nextCoins = prevCoins + COINS_PER_PRAYER;
+        const nextCoins = prevCoins + TOTAL_BONUS;
         try {
           localStorage.setItem('microjobs_coins', String(nextCoins));
           localStorage.setItem('microjobs_quran_coins', String(nextCoins));
@@ -517,27 +522,37 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
         return nextCoins;
       });
 
-      const updatedAwarded = {
-        ...awardedPrayers,
-        [prayerKey]: true
-      };
-      setAwardedPrayers(updatedAwarded);
+      setHasClaimedDailyStreak(true);
       try {
-        localStorage.setItem(`namaj_awarded_${todayKey}`, JSON.stringify(updatedAwarded));
+        localStorage.setItem(`namaj_streak_claimed_${todayKey}`, 'true');
+        const streakIncKey = `namaj_streak_day_incremented_${todayKey}`;
+        if (!localStorage.getItem(streakIncKey)) {
+          localStorage.setItem(streakIncKey, 'true');
+          const currentStreak = parseInt(localStorage.getItem('microjobs_namaj_streak_days') || '0', 10);
+          const nextStreak = Math.min(30, currentStreak + 1);
+          localStorage.setItem('microjobs_namaj_streak_days', String(nextStreak));
+        }
       } catch (e) {
-        console.warn('Could not save awarded prayers:', e);
+        console.warn('Could not save streak claim:', e);
       }
 
       if (onAddCoins) {
-        onAddCoins(COINS_PER_PRAYER, `আলহামদুলিল্লাহ! ${pName} নামাজ আদায় করার জন্য +${COINS_PER_PRAYER} টি কয়েন উপরে যুক্ত হয়েছে!`);
+        onAddCoins(TOTAL_BONUS, `মাশাআল্লাহ! ৫ ওয়াক্ত নামাজ সম্পূর্ণ আদায় করায় এক সাথে +${TOTAL_BONUS} টি কয়েন উপরে যুক্ত হয়েছে!`);
       }
 
-      setClaimToast(`আলহামদুলিল্লাহ! ${pName} নামাজ আদায় করায় +${toBengaliDigits(COINS_PER_PRAYER)} টি কয়েন উপরে যুক্ত হয়েছে! 🪙`);
-      setTimeout(() => setClaimToast(null), 3500);
+      setClaimToast(`মাশাআল্লাহ! ৫ ওয়াক্ত নামাজ সম্পূর্ণ আদায় করায় এক সাথে +১০ টি কয়েন উপরে যুক্ত হয়েছে! 🎉`);
+      setTimeout(() => setClaimToast(null), 4000);
+    } else if (willBeChecked) {
+      if (hasClaimedDailyStreak) {
+        setClaimToast(`আলহামদুলিল্লাহ! ${pName} নামাজ চিহ্নিত করা হয়েছে।`);
+      } else {
+        setClaimToast(`আলহামদুলিল্লাহ! ${pName} নামাজ চিহ্নিত হয়েছে (${toBengaliDigits(completedCountAfter)}/৫ ওয়াক্ত)। ৫ ওয়াক্ত পূর্ণ হলে এক সাথে ১০ টি কয়েন পাবেন!`);
+      }
+      setTimeout(() => setClaimToast(null), 3000);
     }
   };
 
-  // Claim Daily Prayer Streak Reward
+  // Claim Daily Prayer Streak Reward (Manual button if user clicks)
   const handleClaimStreakReward = () => {
     if (hasClaimedDailyStreak) return;
     const completedCount = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'].filter(
@@ -545,7 +560,7 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
     ).length;
 
     if (completedCount < 5) {
-      setClaimToast('আজকের ৫ ওয়াক্ত নামাজ সম্পূর্ণ করে বোনাস ক্লেইম করুন!');
+      setClaimToast(`আজকের ৫ ওয়াক্ত নামাজ সম্পূর্ণ করুন (বাকি ${toBengaliDigits(5 - completedCount)} ওয়াক্ত)। ৫ ওয়াক্ত পূর্ণ হলেই এক সাথে ১০ টি কয়েন পাবেন!`);
       setTimeout(() => setClaimToast(null), 3000);
       return;
     }
@@ -563,11 +578,22 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
     });
 
     if (onAddCoins) {
-      onAddCoins(STREAK_BONUS, `মাশাআল্লাহ! ৫ ওয়াক্ত নামাজ সম্পন্ন করায় দৈনিক বোনাস +${STREAK_BONUS} টি কয়েন উপরে যুক্ত হয়েছে!`);
+      onAddCoins(STREAK_BONUS, `মাশাআল্লাহ! ৫ ওয়াক্ত নামাজ সম্পূর্ণ করায় এক সাথে +${STREAK_BONUS} টি কয়েন উপরে যুক্ত হয়েছে!`);
     }
     setHasClaimedDailyStreak(true);
-    localStorage.setItem(`namaj_streak_claimed_${todayKey}`, 'true');
-    setClaimToast(`মাশাআল্লাহ! ৫ ওয়াক্ত নামাজ সম্পন্ন করায় দৈনিক বোনাস +১০ কয়েন উপরে যুক্ত হয়েছে! 🪙`);
+    try {
+      localStorage.setItem(`namaj_streak_claimed_${todayKey}`, 'true');
+      const streakIncKey = `namaj_streak_day_incremented_${todayKey}`;
+      if (!localStorage.getItem(streakIncKey)) {
+        localStorage.setItem(streakIncKey, 'true');
+        const currentStreak = parseInt(localStorage.getItem('microjobs_namaj_streak_days') || '0', 10);
+        const nextStreak = Math.min(30, currentStreak + 1);
+        localStorage.setItem('microjobs_namaj_streak_days', String(nextStreak));
+      }
+    } catch (e) {
+      console.warn('Could not save streak claim:', e);
+    }
+    setClaimToast(`মাশাআল্লাহ! ৫ ওয়াক্ত নামাজ সম্পন্ন করায় এক সাথে +১০ টি কয়েন উপরে যুক্ত হয়েছে! 🎉`);
     setTimeout(() => setClaimToast(null), 4000);
   };
 
@@ -702,7 +728,7 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
                 title="নামাজ ট্র্যাকার ও আমল থেকে মোট অর্জিত কয়েন"
                 className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 border border-amber-400/40 text-amber-300 shadow-sm transition-all backdrop-blur-md cursor-default"
               >
-                <span className="text-base sm:text-lg animate-bounce select-none">🪙</span>
+                <span className="material-symbols-outlined text-amber-300 text-lg sm:text-xl select-none">toll</span>
                 <span className="text-white font-black text-xs sm:text-sm tracking-wide">
                   {toBengaliDigits(coins)}
                 </span>
@@ -1280,7 +1306,7 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
                   আজকের নামাজ ট্র্যাকার ও রেকর্ড
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500">
-                  প্রতি ওয়াক্ত নামাজ আদায়ের পর টিক চিহ্ন দিন। প্রতি ওয়াক্তে ২ কয়েন এবং ৫ ওয়াক্ত পূর্ণ হলে দৈনিক বোনাস গ্রহণ করুন।
+                  প্রতি ওয়াক্ত নামাজ আদায়ের পর টিক চিহ্ন দিন। ৫ ওয়াক্ত নামাজ সম্পন্ন হলে এক সাথে ১০টি কয়েন উপরে যুক্ত হবে।
                 </p>
               </div>
 
@@ -1290,7 +1316,7 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
                 <div className="bg-amber-50 rounded-2xl p-3 sm:p-4 border border-amber-200 text-center sm:text-right shrink-0">
                   <span className="text-[11px] font-bold text-amber-800 block">মোট অর্জিত কয়েন</span>
                   <div className="text-lg sm:text-2xl font-black text-amber-950 flex items-center justify-center sm:justify-end gap-1 font-numeric-stat">
-                    <span className="text-xl">🪙</span>
+                    <span className="material-symbols-outlined text-amber-600 text-xl sm:text-2xl">toll</span>
                     <span>{toBengaliDigits(coins)}</span>
                     <span className="text-xs font-bold text-amber-700">কয়েন</span>
                   </div>
@@ -1346,11 +1372,6 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
                           }`}
                         >
                           <span>{item.nameBn}</span>
-                          {awardedPrayers[item.key] && (
-                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 no-underline inline-flex items-center gap-0.5">
-                              🪙 +২
-                            </span>
-                          )}
                         </h4>
                         <p className="text-[11px] text-slate-500">{item.sub}</p>
                       </div>
@@ -1366,8 +1387,8 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
             {/* Daily Streak Bonus Section */}
             <div className="bg-gradient-to-r from-emerald-800 to-teal-900 text-white rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-amber-400 text-slate-900 flex items-center justify-center font-black text-xl shrink-0 shadow-xs">
-                  🪙
+                <div className="w-12 h-12 rounded-2xl bg-amber-400 text-amber-950 flex items-center justify-center font-black text-xl shrink-0 shadow-xs">
+                  <span className="material-symbols-outlined text-[28px]">toll</span>
                 </div>
                 <div>
                   <h4 className="font-black text-base text-white">দৈনিক নামাজ স্ট্রিক রিওয়ার্ড (+১০ কয়েন)</h4>

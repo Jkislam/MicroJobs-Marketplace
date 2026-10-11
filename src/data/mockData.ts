@@ -350,6 +350,90 @@ export const INITIAL_JOBS: Job[] = [
     },
     status: 'active',
     createdAt: '8h ago'
+  },
+  {
+    id: 'TB-101',
+    title: '10 Referrals Target Bonus (Invite 10 Active Friends)',
+    category: 'Target Bonus',
+    subCategory: 'Referral Bonus',
+    reward: 2.50,
+    availableSlots: 450,
+    totalSlots: 500,
+    description: 'Invite 10 active friends using your personal referral link and unlock a guaranteed $2.50 (৳250) milestone bonus reward.',
+    instructions: [
+      'Copy your unique referral link from your profile or the Target Bonus page',
+      'Share with friends or social networks and ensure 10 members complete registration',
+      'Submit your referral list or confirmation username in proof field to claim'
+    ],
+    requirements: ['10 Verified Referrals', 'Active User Accounts'],
+    daysLeft: 28,
+    client: {
+      name: 'WorkMarket Official',
+      username: '@workmarket_hq',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+      verified: true,
+      rating: 5.0,
+      reviewsCount: 1540,
+      badgeText: 'Official Bonus'
+    },
+    status: 'active',
+    createdAt: '1h ago'
+  },
+  {
+    id: 'TB-102',
+    title: '5 Mobile Recharges Milestone Bonus (Complete 5 Top-ups)',
+    category: 'Target Bonus',
+    subCategory: 'Mobile Recharge',
+    reward: 1.50,
+    availableSlots: 280,
+    totalSlots: 350,
+    description: 'Complete 5 mobile recharge transactions using the platform Mobile Recharge service and claim an extra $1.50 cashback milestone bonus.',
+    instructions: [
+      'Go to the Mobile Recharge section in Find Jobs and recharge any mobile number',
+      'Ensure a total of 5 successful recharge transactions are recorded',
+      'Submit your recharge transaction IDs or mobile numbers as proof'
+    ],
+    requirements: ['5 Completed Mobile Recharges', 'Valid Transaction IDs'],
+    daysLeft: 20,
+    client: {
+      name: 'WorkMarket Official',
+      username: '@workmarket_hq',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+      verified: true,
+      rating: 5.0,
+      reviewsCount: 1540,
+      badgeText: 'Official Bonus'
+    },
+    status: 'active',
+    createdAt: '2h ago'
+  },
+  {
+    id: 'TB-103',
+    title: '1 Month Prayer Streak Special Bonus (30 Consecutive Days)',
+    category: 'Target Bonus',
+    subCategory: 'Namaj Pora (Prayer)',
+    reward: 4.50,
+    availableSlots: 850,
+    totalSlots: 1000,
+    description: 'Maintain a 30-day continuous streak of 5 daily prayers in Namaj Pora and claim a mega reward of $4.50 (৳450) plus 500 bonus coins.',
+    instructions: [
+      'Log into Namaj Pora each day and complete tracking for all 5 daily prayers',
+      'Keep up a consistent 30-day streak without missing a day',
+      'Once 30 days are achieved, claim the bonus instantly to deposit earnings into your wallet'
+    ],
+    requirements: ['30 Days Prayer Tracking Streak', '5 Daily Prayers Tracked Each Day'],
+    daysLeft: 30,
+    client: {
+      name: 'WorkMarket Official',
+      username: '@workmarket_hq',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+      verified: true,
+      rating: 5.0,
+      reviewsCount: 1540,
+      badgeText: 'Official Bonus'
+    },
+    status: 'active',
+    createdAt: '3h ago'
   }
 ];
 
@@ -404,8 +488,8 @@ export const CATEGORIES_LIST: CategoryItem[] = [
     name: 'Mobile Recharge',
     iconName: 'phonelink_ring',
     jobsCount: '',
-    rewardRange: '$0.10 - $1.00',
-    description: 'Instant mobile top-up and recharge rewards.',
+    rewardRange: '৳20 - ৳1,000 Top-up',
+    description: 'Instant mobile recharge & top-up for GP, Banglalink, Robi & Airtel.',
     activeJobsNumber: 130
   },
   {
@@ -413,8 +497,8 @@ export const CATEGORIES_LIST: CategoryItem[] = [
     name: 'Target Bonus',
     iconName: 'stars',
     jobsCount: '',
-    rewardRange: '$1.00 - $10.00',
-    description: 'Complete daily targets to earn special bonus rewards.',
+    rewardRange: '$1.00 - $7.50 / ৳150 - ৳750',
+    description: 'Special milestone tasks for Referrals, Mobile Recharges, and 1-Month Prayer Streaks.',
     activeJobsNumber: 75
   },
   {

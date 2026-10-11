@@ -308,18 +308,28 @@ export const HomePage: React.FC<HomePageProps> = ({
                   } else if (cat.name.includes('Telegram')) {
                     onNavigate('telegram-sell');
                   } else if (
+                    cat.id === 'cat-target-bonus' ||
+                    cat.name.toLowerCase().includes('target') ||
+                    cat.name.includes('টার্গেট')
+                  ) {
+                    onNavigate('target-bonus');
+                  } else if (
+                    cat.id === 'cat-mobile-recharge' ||
+                    cat.name.toLowerCase().includes('recharge') ||
+                    cat.name.includes('রিচার্জ')
+                  ) {
+                    onNavigate('mobile-recharge');
+                  } else if (
                     cat.id === 'cat-quran' ||
                     cat.name.toLowerCase().includes('quran') ||
-                    cat.name.includes('কোরআন') ||
-                    (cat.description && cat.description.toLowerCase().includes('quran'))
+                    cat.name.includes('কোরআন')
                   ) {
                     onNavigate('quran');
                   } else if (
                     cat.id === 'cat-namaz' ||
                     cat.name.toLowerCase().includes('namaj') ||
                     cat.name.toLowerCase().includes('namaz') ||
-                    cat.name.includes('নামাজ') ||
-                    (cat.description && (cat.description.toLowerCase().includes('prayer') || cat.description.toLowerCase().includes('namaz') || cat.description.toLowerCase().includes('namaj')))
+                    cat.name.includes('নামাজ')
                   ) {
                     onNavigate('namaj');
                   } else {
